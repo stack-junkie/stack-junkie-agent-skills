@@ -1,0 +1,12 @@
+{
+  "name": "repo-readiness",
+  "version": "0.1.0-alpha.0",
+  "private": true,
+  "description": "Personal Codex skill for ckvam repo readiness guardrails.",
+  "scripts": {
+    "sync-version": "scripts/run_python.cmd scripts/sync_version.py",
+    "check-version": "scripts/run_python.cmd scripts/sync_version.py --check",
+    "check-release": "scripts/run_python.cmd scripts/check_release_metadata.py --staged",
+    "install-skill": "scripts/install_skill.cmd"
+  }
+}
