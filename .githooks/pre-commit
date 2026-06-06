@@ -1,0 +1,4 @@
+#!/bin/sh
+scripts/run_python.cmd scripts/sync_version.py --check || exit 1
+scripts/run_python.cmd scripts/check_release_metadata.py --staged || exit 1
+python C:/Users/stack-junkie/.codex/skills/.system/skill-creator/scripts/quick_validate.py skill/repo-readiness || exit 1
