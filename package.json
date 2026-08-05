@@ -1,0 +1,13 @@
+{
+  "name": "drive-project-work",
+  "version": "0.1.0-alpha.0",
+  "private": true,
+  "description": "Personal Codex controller skill for verified project delivery.",
+  "scripts": {
+    "sync-version": "scripts/run_python.cmd scripts/sync_version.py",
+    "check-version": "scripts/run_python.cmd scripts/sync_version.py --check",
+    "check-release": "scripts/run_python.cmd scripts/check_release_metadata.py --staged",
+    "check": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check.ps1",
+    "install-skill": "scripts/install_skill.cmd"
+  }
+}
