@@ -1,0 +1,4 @@
+interface:
+  display_name: "Drive Project Work"
+  short_description: "Drive project tasks from request to verified checkpoint"
+  default_prompt: "Use $drive-project-work to drive this project task through decisions, implementation, verification, and checkpointing."
