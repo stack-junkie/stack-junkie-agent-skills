@@ -65,6 +65,31 @@ Ask no more than three high-value questions in one round. For each, provide:
 
 Do not ask which backlog item or implementation step to do next when project authorities already determine the order.
 
+### Apply the 93 percent intent gate
+
+Do not implement an affected user-visible or domain-semantic decision until confidence in the user's intent is at least 93 percent. Treat this as an evidence gate, not a claimed psychological probability.
+
+Score these 14 intent checks as `clear` or `unclear`; 13 of 14 clear checks rounds to 93 percent:
+
+1. intended outcome;
+2. target user and use context;
+3. triggering workflow or starting state;
+4. current behavior being kept or changed;
+5. desired visible behavior;
+6. included scope;
+7. excluded scope;
+8. controlling reference behavior or source precedence;
+9. data, signal, field, or domain meaning when applicable;
+10. interaction and information structure;
+11. compatibility and persistence expectations;
+12. error, unavailable, empty, and partial states;
+13. observable completion and acceptance criteria;
+14. permission, risk, and delivery boundary.
+
+The outcome, desired behavior, included scope, controlling reference, applicable domain meaning, and completion criteria are critical checks. Never proceed with the affected decision while a critical check is unclear, even if the numerical threshold is otherwise met. Mark a check clear only from an explicit owner statement, an accepted canonical decision, or directly observed reference behavior that the owner has authorized as controlling. Do not use an inference, a likely convention, or an agent preference as a clear check.
+
+When below the gate, continue safe read-only discovery, state the uncertain interpretation and current score, and ask up to three questions that eliminate the most uncertainty. Include the recommended answer and reasoning, but do not let the recommendation substitute for the owner's answer. Repeat until the gate is met. Apply the gate only to the affected ambiguous decision; do not stall unrelated work whose intent is already clear.
+
 ## Detect preference and process deviations
 
 Keep watching for feedback that may conflict with the standing process, even when the user does not phrase it as a formal rule change. Signals include:
