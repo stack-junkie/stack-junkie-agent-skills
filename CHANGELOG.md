@@ -2,6 +2,14 @@
 
 All notable changes to the maintained `drive-project-work` skill are documented here.
 
+## [0.1.0-alpha.3] - 2026-08-06
+
+### Changed
+
+- Added the owner's standing communication preference: blunt and correctly spelled, no em dashes,
+  occasional useful profanity, no forced repetition, and direct non-hateful alternatives to racial
+  slurs.
+
 ## [0.1.0-alpha.2] - 2026-08-06
 
 ### Changed
