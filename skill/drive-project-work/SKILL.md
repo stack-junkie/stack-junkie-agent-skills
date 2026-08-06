@@ -197,6 +197,26 @@ Default behavior for a completed maintained-product change is one coherent commi
 
 Never infer permission to modify protected refs, tag, publish, release, alter remotes, rewrite history, force-push, or distribute artifacts.
 
+## Apply the EtherPlot delivery cadence
+
+For EtherPlot, treat each coherent, independently testable slice as its own published checkpoint:
+
+1. Complete the implementation, focused checks, integrated build, and real workflow exercise.
+2. For visual changes, capture representative screenshots outside the repository, inspect every
+   image directly, and do not call the result good until the visible result has been reviewed.
+3. Increment the configured alpha prerelease sequence, add the product changelog entry, create one
+   reviewed commit, and push only to the repository-authorized checkpoint branch.
+4. Immediately report the version, commit, branch, behavior delivered, exact test steps, expected
+   results, and remaining caveats in the active chat.
+5. Send the same test note to the owner's connected email account as a self-email. Attach or link
+   inspected screenshots when the email connector supports it. If email is unavailable, report the
+   failed delivery without withholding the Git checkpoint or chat instructions.
+
+Do not accumulate several completed EtherPlot slices behind one late version bump or notification.
+After implementation is otherwise complete, perform a documentation-reconciliation slice: rewrite
+the README around the actual setup and user journeys, replace or remove stale documentation, keep
+canonical authorities intact, and publish that documentation slice through the same cadence.
+
 ## Stop conditions
 
 Stop and ask with evidence, options, recommendation, and exact required authority when:
