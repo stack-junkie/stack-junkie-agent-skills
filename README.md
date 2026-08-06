@@ -1,4 +1,4 @@
-# Drive Project Work v0.1.0-alpha.1
+# Drive Project Work v0.1.0-alpha.2
 
 A personal Codex controller skill that drives project tasks from a requested outcome through decision extraction, implementation, verification, release hygiene, and an authorized checkpoint.
 
@@ -24,6 +24,6 @@ The skill watches for feedback that suggests the process itself should change. I
 
 ## Release metadata
 
-- Version: `0.1.0-alpha.1`
+- Version: `0.1.0-alpha.2`
 - Version source: `src\version.py`
 - Changelog: `CHANGELOG.md`

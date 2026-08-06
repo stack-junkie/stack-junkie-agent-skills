@@ -2,6 +2,14 @@
 
 All notable changes to the maintained `drive-project-work` skill are documented here.
 
+## [0.1.0-alpha.2] - 2026-08-06
+
+### Changed
+
+- Added the EtherPlot per-slice delivery cadence: verified versioned checkpoints, authorized branch
+  pushes, immediate chat and self-email test instructions, inspected screenshots for visual work,
+  and a final README plus stale-documentation reconciliation slice.
+
 ## [0.1.0-alpha.1] - 2026-08-05
 
 ### Changed
