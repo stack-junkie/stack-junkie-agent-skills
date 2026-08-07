@@ -2,6 +2,13 @@
 
 All notable changes to the maintained `drive-project-work` skill are documented here.
 
+## [0.1.0-alpha.4] - 2026-08-06
+
+### Changed
+
+- Required ordinary English before technical terms, with immediate plain-language definitions and
+  concrete examples whenever jargon is genuinely necessary.
+
 ## [0.1.0-alpha.3] - 2026-08-06
 
 ### Changed
