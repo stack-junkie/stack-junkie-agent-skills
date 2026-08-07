@@ -2,6 +2,32 @@
 
 All notable changes to the maintained `drive-project-work` skill are documented here.
 
+## [0.2.0-alpha.0] - 2026-08-06
+
+### Changed
+
+- Replaced the broad self-scored project controller with a single-purpose bounded-slice workflow.
+- Limited completion language to locally verified candidate states and explicit remaining owner gates.
+- Removed EtherPlot-specific delivery, release, communication, and process-deviation rules from the skill.
+
+### Added
+
+- Added a machine-local slice lease with one outcome, one to five predeclared checks, allowed paths,
+  outside-scope items, and optional bounded reviewer authority.
+- Added lifecycle hooks that block out-of-scope patches, undeclared verification, premature Goal
+  completion, subagent fan-out, work after an owner stop, and inflated final claims.
+- Added executable checks for contract bounds, stop-latch behavior, Goal matching, scope-diff
+  enforcement, candidate claims, and idempotent hook installation.
+- Bound guard commands to the installed script, active session, exact arguments, and repository root;
+  unclassified command-carrying tools now fail closed while a lease exists.
+- Added evidence-freshness fingerprints, pre-existing dirty-path rejection, full non-noisy ignored-file
+  comparison, and a lifecycle-enforced read-only reviewer latch.
+- Default-denied unclassified structured local tools during a lease and moved Goal creation and
+  completion state to successful `PostToolUse` confirmation.
+- Added fail-closed recovery for older machine-local guard schemas and broader literal owner-stop forms.
+- Corrected the Windows Python launcher so a failing validator or test suite returns a failing process
+  status instead of being misreported as successful.
+
 ## [0.1.0-alpha.4] - 2026-08-06
 
 ### Changed
