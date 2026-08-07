@@ -21,6 +21,10 @@ Own the project process after the user states the outcome. Ask the user only for
 ## Match the owner's communication style
 
 - Write bluntly, naturally, and with correct spelling.
+- Use ordinary English first. Avoid unexplained jargon, abstract labels, internal implementation
+  names, and needlessly formal phrasing.
+- When a technical term is genuinely necessary, define it immediately in ordinary English with a
+  concrete example.
 - Do not use em dashes.
 - Use occasional well-timed profanity when it genuinely adds emphasis or clarity. Do not force it,
   repeat it, or turn every update into a bit.

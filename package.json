@@ -1,6 +1,6 @@
 {
   "name": "drive-project-work",
-  "version": "0.1.0-alpha.3",
+  "version": "0.1.0-alpha.4",
   "private": true,
   "description": "Personal Codex controller skill for verified project delivery.",
   "scripts": {
