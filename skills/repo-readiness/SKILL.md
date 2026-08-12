@@ -62,7 +62,8 @@ Prefer adapting an existing valid process over replacing it. For a repository wi
 7. Add `.repo-policy.json`, `scripts/repo_policy.py`, and tracked `.githooks` only for a versioned repository.
 8. Configure only the version mirrors genuinely required by build or packaging tools.
 9. Configure at least one real project verification command for maintained products, libraries, tools, and skills. An empty command list is incomplete and must fail audit.
-10. Require Gitleaks, review `.gitignore` against the actual stack, run `git config core.hooksPath .githooks`, then audit the result.
+10. Treat verification commands as trusted repository code. Inspect them before execution and set `verification_timeout_seconds` only when the 900-second default is unsuitable.
+11. Require Gitleaks, review `.gitignore` against the actual stack, run `git config core.hooksPath .githooks`, then audit the result.
 
 Use the bundled scaffold command only when its target files do not already exist:
 
@@ -103,7 +104,7 @@ Treat `main` as the normal source of truth. Work directly on it for serial bound
 For "fix," "govern," "clean up," or "reconcile" requests:
 
 1. Fetch current remote-tracking information without changing worktrees. Defer pruning until cleanup is approved.
-2. Run the bundled `python <skill-dir>\scripts\repo_policy.py repo-health --repo <repo>` to inventory branches and worktrees, even if the target has not adopted this policy. Inspect unique commits and conflicts only for branches that are not already merged.
+2. Run the bundled `python <skill-dir>\scripts\repo_policy.py repo-health --repo <repo>` to inventory branches, every configured remote, and worktrees, even if the target has not adopted this policy. Inspect unique commits and conflicts only for branches that are not already merged.
 3. Classify every non-main branch as fast-forward, merge, selected cherry-picks, already merged, deliberately retained, or archived then removed.
 4. Present one compact table covering each branch or worktree, its disposition, and any destructive action.
 5. Treat approval of that complete table as one cleanup approval. Do not expand it to unlisted destructive actions.
@@ -111,7 +112,7 @@ For "fix," "govern," "clean up," or "reconcile" requests:
 7. Never remove a dirty worktree until its uncommitted contents have an approved disposition. Prefer fast-forward integration. Never rewrite published history or force-push unless explicitly approved.
 8. Verify main before deleting source branches. Delete only branches proven merged or explicitly approved as abandoned, then prune stale worktree records.
 
-The policy command reports Git facts; the agent decides product intent. Never automate the selection or deletion of unique commits.
+The default branch's upstream remote is governed. Additional upstream or vendor remotes are reported but their independent history is not treated as local branch clutter. The policy command reports Git facts; the agent decides product intent. Never automate the selection or deletion of unique commits.
 
 ## Repository hygiene
 
@@ -144,7 +145,7 @@ python scripts/repo_policy.py scan-secrets --repo . --scope tracked
 python scripts/repo_policy.py scan-secrets --repo . --scope history
 ```
 
-The pre-commit check runs the staged scan, full verification scans current files, and governance or release work scans history. Always use full redaction. If Gitleaks is unavailable, fail with installation guidance instead of silently weakening the gate.
+The pre-commit check runs the staged scan, full verification scans every regular tracked Git index blob, and governance or release work scans history. Keep case-colliding paths and merge-conflict stages independently inspectable. Never follow a working-tree symlink during a tracked scan, and skip submodule entries. Always use full redaction. If Gitleaks is unavailable, fail with installation guidance instead of silently weakening the gate.
 
 If a real credential is found, stop, identify only its rule and location, and require rotation. Treat history rewriting as a separate destructive decision. Allowlist only a narrow fingerprint or path with a preceding `# Reason: ...` comment in `.gitleaksignore`. Recommend GitHub push protection when supported; do not add Actions for it.
 
@@ -214,6 +215,8 @@ python scripts/repo_policy.py check-staged --repo .
 python scripts/repo_policy.py repo-health --repo .
 python scripts/repo_policy.py verify --repo .
 ```
+
+Before `verify`, inspect `.repo-policy.json` verification commands as executable repository code. Each command is limited to `verification_timeout_seconds`, which defaults to 900 and may not exceed 3600 seconds. Release preparation renders every target first and replaces the version, changelog, and configured mirrors as one rollback-protected update.
 
 Tracked hooks provide fast feedback, but all local hooks can be bypassed. The policy script, final diff review, and independent release review are the evidence. Never describe hooks as an absolute security boundary.
 

@@ -32,6 +32,7 @@ Use these sources when establishing or explaining repository policy. Do not brow
 - [Git worktree documentation](https://git-scm.com/docs/git-worktree.html) defines linked worktree metadata and `git worktree prune` for stale administrative records. Never prune or remove a live dirty worktree without preserving its contents.
 - [Git bundle documentation](https://git-scm.com/docs/git-bundle) supports portable ref backups and verification. Create and verify an all-ref bundle before an approved destructive reconciliation.
 - [GitHub branch management guidance](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-branches-in-your-repository) recommends removing merged or stale branches. This workflow keeps `main` primary and uses short-lived topic branches only when they provide isolation.
+- Govern remote-tracking branches on the default branch's configured upstream remote. Inventory other remotes, but do not mistake vendor or upstream history for abandoned local work.
 
 ## Secrets and ignored files
 
@@ -39,6 +40,13 @@ Use these sources when establishing or explaining repository policy. Do not brow
 - [GitHub push protection](https://docs.github.com/en/code-security/concepts/secret-security/push-protection) blocks supported credentials before they reach the remote. Recommend it when available, but keep local scanning because coverage and availability vary.
 - [OWASP Secrets Management](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html) recommends centralized storage, limited access, rotation, and preventing secret propagation through copies and forks. A discovered real credential requires rotation; deleting a file is not remediation.
 - [GitHub's gitignore collection](https://github.com/github/gitignore) curates small stack-specific templates rather than exhaustive lists. Merge only rules justified by detected tools and frameworks, and preserve intentional project rules.
+- Scan tracked content from Git index blobs rather than working-tree paths so symlinks cannot redirect the scanner outside the repository. Treat submodule commits as references, not ordinary file content.
+
+## Verification commands
+
+- Repository-configured verification commands are executable code. Inspect them before running policy checks in an untrusted clone.
+- Bound every command with a practical timeout and stop its process tree when the limit is reached. A timeout is a failure with the exact command reported, not permission to skip verification.
+- Prepare multi-file release metadata completely before replacement and roll back already-replaced files if a later replacement fails.
 
 ## Repository layout
 

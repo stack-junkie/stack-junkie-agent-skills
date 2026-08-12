@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import json
+import importlib.util
 import os
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -90,7 +93,140 @@ def scaffold_skill(repo: Path) -> None:
     write_readme(repo)
 
 
+def load_policy_module():
+    spec = importlib.util.spec_from_file_location("repo_policy_under_test", POLICY)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
 class RepoPolicyTests(unittest.TestCase):
+    def test_configuration_values_and_shapes_are_validated(self) -> None:
+        invalid_values = [
+            ("project_type", "unknown", "project_type must be one of"),
+            ("canonical_version_file", "../VERSION", "safe non-empty repository-relative path"),
+            ("changelog_file", "../CHANGELOG.md", "safe non-empty repository-relative path"),
+            ("default_branch", "bad branch", "valid Git branch name"),
+            ("branch_prefix", "agent", "valid Git branch prefix"),
+            ("tag_prefix", "bad lock", "Git-ref-safe string"),
+            ("github_actions", "sometimes", "github_actions must be off or on"),
+            ("version_mirrors", {}, "version_mirrors must be a list"),
+            ("verification_commands", [123], "verification_commands must contain non-empty strings"),
+            ("verification_timeout_seconds", 0, "must be an integer from 1 to 3600"),
+        ]
+        for key, value, expected_message in invalid_values:
+            with self.subTest(key=key), tempfile.TemporaryDirectory() as temp:
+                repo = Path(temp) / "invalid-config"
+                scaffold_skill(repo)
+                config_path = repo / ".repo-policy.json"
+                config = json.loads(config_path.read_text(encoding="utf-8"))
+                config[key] = value
+                config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
+                result = policy(repo, "audit", expected=1)
+                self.assertIn(expected_message, result.stdout)
+
+    def test_scaffold_gitignore_is_minimal(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp) / "minimal-ignore"
+            policy(repo, "scaffold", "--project-type", "skill", "--init-git")
+            content = (repo / ".gitignore").read_text(encoding="utf-8")
+            for required in (".env", "credentials.json", ".DS_Store", "Thumbs.db"):
+                self.assertIn(required, content)
+            for stack_specific in ("__pycache__/", "node_modules/", "build/", "dist/", "*.log"):
+                self.assertNotIn(stack_specific, content)
+
+    def test_verification_timeout_reports_exact_command(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp) / "timeout"
+            scaffold_skill(repo)
+            marker = Path(temp) / "descendant-survived.txt"
+            child = Path(temp) / "timeout-child.py"
+            child.write_text(
+                "import time\n"
+                "from pathlib import Path\n"
+                "time.sleep(1.5)\n"
+                f"Path({str(marker)!r}).write_text('survived', encoding='utf-8')\n",
+                encoding="utf-8",
+            )
+            launcher = Path(temp) / "timeout-launcher.py"
+            launcher.write_text(
+                "import subprocess\nimport sys\nimport time\n"
+                f"subprocess.Popen([sys.executable, {str(child)!r}])\n"
+                "time.sleep(5)\n",
+                encoding="utf-8",
+            )
+            config_path = repo / ".repo-policy.json"
+            config = json.loads(config_path.read_text(encoding="utf-8"))
+            command = f'"{sys.executable}" "{launcher}"'
+            config["verification_commands"] = [command]
+            config["verification_timeout_seconds"] = 1
+            config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
+            result = policy(repo, "verify", expected=1)
+            self.assertIn("timed out after 1s", result.stdout)
+            self.assertIn(command, result.stdout)
+            time.sleep(1)
+            self.assertFalse(marker.exists(), "timed-out descendant process was not terminated")
+
+    def test_mirror_configuration_is_fully_validated(self) -> None:
+        invalid_mirrors = [
+            (["VERSION"], "must be an object"),
+            ([{"path": "../outside", "kind": "json"}], ".path must be a safe"),
+            ([{"path": "package.json", "kind": "json", "key": "bad..key"}], ".key must be"),
+            ([{"path": "version.txt", "kind": "regex", "pattern": "(1.0.0)", "replacement": "{version}"}], "named 'version' group"),
+            ([{"path": "version.txt", "kind": "regex", "pattern": "(?P<version>.+)", "replacement": "fixed"}], ".replacement must contain"),
+            ([{"path": "version.txt", "kind": "other"}], ".kind must be json or regex"),
+        ]
+        for mirrors, expected_message in invalid_mirrors:
+            with self.subTest(mirrors=mirrors), tempfile.TemporaryDirectory() as temp:
+                repo = Path(temp) / "invalid-mirror"
+                scaffold_skill(repo)
+                config_path = repo / ".repo-policy.json"
+                config = json.loads(config_path.read_text(encoding="utf-8"))
+                config["version_mirrors"] = mirrors
+                config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
+                result = policy(repo, "audit", expected=1)
+                self.assertIn(expected_message, result.stdout)
+
+    def test_release_impact_must_be_a_real_unique_trailer(self) -> None:
+        module = load_policy_module()
+        with self.assertRaisesRegex(ValueError, "exactly one"):
+            module.parse_message("feat(core): add feature\n\nRelease-Impact: minor\nbody continues")
+        with self.assertRaisesRegex(ValueError, "exactly one"):
+            module.parse_message(
+                "feat(core): add feature\n\nRelease-Impact: minor\nRelease-Impact: minor"
+            )
+        subject, impact = module.parse_message(
+            "feat(core): add feature\n\nA useful body.\n\nRelease-Impact: minor"
+        )
+        self.assertEqual("feat(core): add feature", subject)
+        self.assertEqual("minor", impact)
+
+    def test_atomic_release_writes_roll_back_on_replacement_failure(self) -> None:
+        module = load_policy_module()
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            first = root / "VERSION"
+            second = root / "CHANGELOG.md"
+            first.write_text("1.0.0\n", encoding="utf-8")
+            second.write_text("before\n", encoding="utf-8")
+            real_replace = module.os.replace
+            forward_replacements = 0
+
+            def fail_second_forward(source, target):
+                nonlocal forward_replacements
+                if ".repo-policy-rollback-" not in str(source):
+                    forward_replacements += 1
+                    if forward_replacements == 2:
+                        raise OSError("simulated replacement failure")
+                return real_replace(source, target)
+
+            with mock.patch.object(module.os, "replace", side_effect=fail_second_forward):
+                with self.assertRaisesRegex(OSError, "was rolled back"):
+                    module.atomic_write_set([(first, "1.1.0\n"), (second, "after\n")])
+            self.assertEqual("1.0.0\n", first.read_text(encoding="utf-8"))
+            self.assertEqual("before\n", second.read_text(encoding="utf-8"))
     def test_scaffold_boundaries(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -272,6 +408,116 @@ class RepoPolicyTests(unittest.TestCase):
                 "# Reason: documented false positive fixture\nfingerprint\n", encoding="utf-8"
             )
             policy(repo, "scan-secrets", "--scope", "tracked")
+
+    def test_tracked_secret_scan_uses_index_blobs_and_skips_links(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            repo = Path(temp) / "index-scan"
+            scaffold_skill(repo)
+            commit_all(repo, "chore(repo): establish scan fixture")
+            tracked = repo / "tracked.txt"
+            tracked.write_text("indexed-content\n", encoding="utf-8")
+            run("git", "add", "tracked.txt", cwd=repo)
+            tracked.write_text("working-tree-content\n", encoding="utf-8")
+
+            blob_result = subprocess.run(
+                ["git", "hash-object", "-w", "--stdin"],
+                cwd=repo,
+                input="outside-target.txt\n",
+                text=True,
+                capture_output=True,
+                encoding="utf-8",
+                env={**os.environ, "REPO_POLICY_GITLEAKS": str(FAKE_GITLEAKS)},
+            )
+            self.assertEqual(0, blob_result.returncode, blob_result.stderr)
+            run(
+                "git", "update-index", "--add", "--cacheinfo",
+                f"120000,{blob_result.stdout.strip()},linked.txt", cwd=repo,
+            )
+
+            object_ids = {}
+            for label, content in (
+                ("upper", "secret-from-upper-case\n"),
+                ("lower", "safe-from-lower-case\n"),
+                ("base", "conflict-base\n"),
+                ("ours", "conflict-ours\n"),
+                ("theirs", "conflict-theirs\n"),
+            ):
+                result = subprocess.run(
+                    ["git", "hash-object", "-w", "--stdin"], cwd=repo, input=content,
+                    text=True, capture_output=True, encoding="utf-8",
+                )
+                self.assertEqual(0, result.returncode, result.stderr)
+                object_ids[label] = result.stdout.strip()
+            run("git", "update-index", "--add", "--cacheinfo", f"100644,{object_ids['upper']},Case.txt", cwd=repo)
+            run("git", "update-index", "--add", "--cacheinfo", f"100644,{object_ids['lower']},case.txt", cwd=repo)
+            conflict = "".join(
+                f"100644 {object_ids[label]} {stage}\tconflict.txt\n"
+                for stage, label in ((1, "base"), (2, "ours"), (3, "theirs"))
+            )
+            conflict_result = subprocess.run(
+                ["git", "update-index", "--index-info"], cwd=repo, input=conflict.encode("utf-8"),
+                capture_output=True,
+            )
+            self.assertEqual(0, conflict_result.returncode, conflict_result.stderr.decode("utf-8", errors="replace"))
+            head = run("git", "rev-parse", "HEAD", cwd=repo).stdout.strip()
+            run("git", "update-index", "--add", "--cacheinfo", f"160000,{head},nested-module", cwd=repo)
+            indexed = load_policy_module().tracked_index_blobs(repo)
+            index_listing = run("git", "ls-files", "--stage", cwd=repo).stdout
+            self.assertEqual(
+                ["1", "2", "3"],
+                [stage for path, _, stage in indexed if path == "conflict.txt"],
+                index_listing,
+            )
+
+            capture = Path(temp) / "tree.txt"
+            policy(
+                repo,
+                "scan-secrets",
+                "--scope",
+                "tracked",
+                extra_env={"FAKE_GITLEAKS_CAPTURE_TREE": str(capture)},
+            )
+            scanned = capture.read_text(encoding="utf-8")
+            self.assertIn("tracked.txt=indexed-content", scanned)
+            self.assertIn("Case.txt=secret-from-upper-case", scanned)
+            self.assertIn("case.txt=safe-from-lower-case", scanned)
+            self.assertIn("conflict.txt=conflict-base", scanned)
+            self.assertIn("conflict.txt=conflict-ours", scanned)
+            self.assertIn("conflict.txt=conflict-theirs", scanned)
+            self.assertNotIn("working-tree-content", scanned)
+            self.assertNotIn("linked.txt", scanned)
+            self.assertNotIn("nested-module", scanned)
+
+    def test_repository_health_governs_upstream_remote_only(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            repo = root / "work"
+            origin = root / "origin.git"
+            vendor = root / "vendor.git"
+            run("git", "init", "--bare", str(origin))
+            run("git", "init", "--bare", str(vendor))
+            scaffold_skill(repo)
+            commit_all(repo, "chore(repo): establish baseline")
+            run("git", "remote", "add", "origin", str(origin), cwd=repo)
+            run("git", "push", "-u", "origin", "main", cwd=repo)
+            run("git", "symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/main", cwd=repo)
+            run("git", "remote", "add", "vendor", str(vendor), cwd=repo)
+            run("git", "push", "vendor", "main", cwd=repo)
+
+            run("git", "switch", "-c", "agent/remote-only", cwd=repo)
+            (repo / "remote.txt").write_text("remote\n", encoding="utf-8")
+            commit_all(repo, "chore(test): add remote-only work")
+            run("git", "push", "origin", "agent/remote-only", cwd=repo)
+            run("git", "switch", "main", cwd=repo)
+            run("git", "branch", "-D", "agent/remote-only", cwd=repo)
+            run("git", "fetch", "--all", cwd=repo)
+
+            result = policy(repo, "repo-health", "--settled", expected=1)
+            self.assertIn("Unintegrated remote branch origin/agent/remote-only", result.stdout)
+            self.assertIn("Additional remote branch observed: vendor/main (not governed)", result.stdout)
+            self.assertNotIn("Unintegrated remote branch vendor/", result.stdout)
+            self.assertNotIn("[remote-branch] origin\t", result.stdout)
+            self.assertNotIn("Merged remote branch remains: origin", result.stdout)
 
     def test_repository_health_blocks_unmerged_work_without_mutation(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

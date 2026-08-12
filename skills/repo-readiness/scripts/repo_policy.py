@@ -6,6 +6,8 @@ import json
 import os
 import re
 import shutil
+import signal
+import stat
 import subprocess
 import sys
 import tempfile
@@ -23,7 +25,6 @@ CONVENTIONAL = re.compile(
     r"^(?P<type>feat|fix|docs|refactor|perf|test|build|ci|chore|revert)"
     r"(?:\([a-z0-9._/-]+\))?(?P<breaking>!)?: .+"
 )
-IMPACT = re.compile(r"^Release-Impact: (none|patch|minor|major)$", re.MULTILINE)
 BANNED_CHANGELOG = re.compile(
     r"\b(as discussed|continued work|in this chat|chat history|conversation|user prompt|"
     r"agent process|tests? (?:run|passed)|files? touched|miscellaneous improvements|various fixes)\b",
@@ -35,6 +36,10 @@ POLICY_KEYS = {
     "branch_prefix": "agent/",
     "secret_scanning": "gitleaks-required",
 }
+PROJECT_TYPES = {"maintained-product", "library-or-tool", "skill", "prototype", "planning-only"}
+GITHUB_ACTION_MODES = {"off", "on"}
+DEFAULT_VERIFICATION_TIMEOUT_SECONDS = 900
+MAX_VERIFICATION_TIMEOUT_SECONDS = 3600
 README_PROJECT_TYPES = {"maintained-product", "library-or-tool", "skill"}
 README_PLACEHOLDER = re.compile(
     r"\b(todo:\s*(?:describe|write|add)|replace (?:this|me)|your project description|lorem ipsum)\b",
@@ -134,8 +139,13 @@ def load_config(repo: Path) -> dict[str, Any]:
     if not path.exists():
         raise ValueError("Missing .repo-policy.json")
     config = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(config, dict):
+        raise ValueError("Repository policy must be a JSON object")
     if config.get("schema_version") != 1:
         raise ValueError("Unsupported policy schema_version")
+    errors = config_errors(config)
+    if errors:
+        raise ValueError("; ".join(errors))
     return config
 
 
@@ -152,7 +162,109 @@ def config_errors(config: dict[str, Any]) -> list[str]:
             errors.append(f"Policy config {key} must be a list")
     if config.get("secret_scanning") != "gitleaks-required":
         errors.append("secret_scanning must be gitleaks-required")
+    if config.get("project_type") not in PROJECT_TYPES:
+        errors.append("project_type must be one of: " + ", ".join(sorted(PROJECT_TYPES)))
+    if config.get("github_actions", "off") not in GITHUB_ACTION_MODES:
+        errors.append("github_actions must be off or on")
+
+    for key in ("canonical_version_file", "changelog_file"):
+        value = config.get(key)
+        if not safe_relative_path(value):
+            errors.append(f"{key} must be a safe non-empty repository-relative path")
+
+    for key in ("default_branch", "branch_prefix"):
+        value = config.get(key)
+        if not isinstance(value, str) or not valid_ref_fragment(value, prefix=(key == "branch_prefix")):
+            errors.append(f"{key} is not a valid Git branch {'prefix' if key == 'branch_prefix' else 'name'}")
+
+    tag_prefix = config.get("tag_prefix", "v")
+    if (
+        not isinstance(tag_prefix, str)
+        or not tag_prefix
+        or subprocess.run(
+            ["git", "check-ref-format", f"refs/tags/{tag_prefix}1.0.0"],
+            text=True,
+            capture_output=True,
+            encoding="utf-8",
+        ).returncode
+    ):
+        errors.append("tag_prefix must be a non-empty Git-ref-safe string")
+
+    commands = config.get("verification_commands", [])
+    if not isinstance(commands, list) or any(not isinstance(item, str) or not item.strip() for item in commands):
+        errors.append("verification_commands must contain non-empty strings")
+
+    timeout = config.get("verification_timeout_seconds", DEFAULT_VERIFICATION_TIMEOUT_SECONDS)
+    if isinstance(timeout, bool) or not isinstance(timeout, int) or not 1 <= timeout <= MAX_VERIFICATION_TIMEOUT_SECONDS:
+        errors.append(
+            f"verification_timeout_seconds must be an integer from 1 to {MAX_VERIFICATION_TIMEOUT_SECONDS}"
+        )
+
+    mirrors = config.get("version_mirrors", [])
+    if not isinstance(mirrors, list):
+        errors.append("version_mirrors must be a list")
+    else:
+        seen_paths: set[str] = set()
+        for index, mirror in enumerate(mirrors):
+            label = f"version_mirrors[{index}]"
+            if not isinstance(mirror, dict):
+                errors.append(f"{label} must be an object")
+                continue
+            relative = mirror.get("path")
+            if not safe_relative_path(relative):
+                errors.append(f"{label}.path must be a safe non-empty repository-relative path")
+            elif relative.replace("\\", "/") in seen_paths:
+                errors.append(f"{label}.path duplicates another version mirror")
+            else:
+                seen_paths.add(relative.replace("\\", "/"))
+            kind = mirror.get("kind")
+            if kind == "json":
+                key = mirror.get("key", "version")
+                if not isinstance(key, str) or not key or any(not part for part in key.split(".")):
+                    errors.append(f"{label}.key must be a non-empty dotted JSON key")
+            elif kind == "regex":
+                pattern = mirror.get("pattern")
+                replacement = mirror.get("replacement")
+                if not isinstance(pattern, str) or not isinstance(replacement, str):
+                    errors.append(f"{label} regex mirrors require string pattern and replacement values")
+                else:
+                    try:
+                        compiled = re.compile(pattern)
+                        if "version" not in compiled.groupindex:
+                            errors.append(f"{label}.pattern must capture a named 'version' group")
+                    except re.error as exc:
+                        errors.append(f"{label}.pattern is invalid: {exc}")
+                    if "{version}" not in replacement:
+                        errors.append(f"{label}.replacement must contain {{version}}")
+            else:
+                errors.append(f"{label}.kind must be json or regex")
     return errors
+
+
+def safe_relative_path(value: Any) -> bool:
+    if not isinstance(value, str) or not value.strip() or "\0" in value:
+        return False
+    normalized = value.replace("\\", "/")
+    if normalized.startswith("/") or re.match(r"^[A-Za-z]:", normalized):
+        return False
+    return all(part not in {"", ".", ".."} for part in normalized.split("/"))
+
+
+def valid_ref_fragment(value: str, prefix: bool) -> bool:
+    if not value or value.startswith(("-", "/")) or value.endswith("."):
+        return False
+    if not prefix and value.endswith("/"):
+        return False
+    if prefix and not value.endswith("/"):
+        return False
+    probe = value + "probe" if prefix else value
+    result = subprocess.run(
+        ["git", "check-ref-format", "--branch", probe],
+        text=True,
+        capture_output=True,
+        encoding="utf-8",
+    )
+    return result.returncode == 0
 
 
 def repo_path(repo: Path, relative: str) -> Path:
@@ -235,6 +347,33 @@ def mirror_updates(repo: Path, config: dict[str, Any], version: str) -> list[tup
 def tracked_files(repo: Path) -> list[str]:
     output = git(repo, "ls-files", "-z").stdout
     return [item.replace("\\", "/") for item in output.split("\0") if item]
+
+
+def tracked_index_blobs(repo: Path) -> list[tuple[str, str, str]]:
+    output = git(repo, "ls-files", "--stage", "-z").stdout
+    blobs: list[tuple[str, str, str]] = []
+    for item in output.split("\0"):
+        if not item:
+            continue
+        metadata, separator, relative = item.partition("\t")
+        if not separator:
+            raise ValueError("Could not parse tracked Git index entry")
+        mode, object_id, stage = metadata.split()
+        if mode in {"100644", "100755"}:
+            blobs.append((relative.replace("\\", "/"), object_id, stage))
+    return blobs
+
+
+def read_git_blob(repo: Path, object_id: str) -> bytes:
+    result = subprocess.run(
+        ["git", "cat-file", "blob", object_id],
+        cwd=repo,
+        capture_output=True,
+    )
+    if result.returncode:
+        message = result.stderr.decode("utf-8", errors="replace").strip()
+        raise ValueError(message or f"Could not read Git blob {object_id}")
+    return result.stdout
 
 
 def gitignore_errors(repo: Path) -> list[str]:
@@ -346,12 +485,13 @@ def scan_secrets(repo: Path, scope: str) -> int:
         if scope == "tracked":
             with tempfile.TemporaryDirectory(prefix="repo-policy-secrets-") as temp:
                 scan_root = Path(temp)
-                for relative in tracked_files(repo):
-                    source = repo / relative
-                    if source.is_file():
-                        target = scan_root / relative
-                        target.parent.mkdir(parents=True, exist_ok=True)
-                        shutil.copy2(source, target)
+                for index, (relative, object_id, stage) in enumerate(tracked_index_blobs(repo)):
+                    # Each index entry gets a separate root. This prevents case-colliding
+                    # paths from overwriting one another on case-insensitive filesystems
+                    # and keeps conflict stages independently inspectable.
+                    target = scan_root / f"entry-{index:06d}-stage-{stage}" / relative
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_bytes(read_git_blob(repo, object_id))
                 result = subprocess.run(
                     [*command, "dir", *common, str(scan_root)],
                     cwd=repo,
@@ -395,6 +535,25 @@ def worktree_records(repo: Path) -> list[dict[str, str]]:
     return records
 
 
+def remote_branch_refs(repo: Path, remote: str) -> list[str]:
+    rows = git(
+        repo,
+        "for-each-ref",
+        "--format=%(refname)|%(symref)",
+        f"refs/remotes/{remote}",
+        check=False,
+    ).stdout.splitlines()
+    branches = []
+    for row in rows:
+        refname, separator, symref = row.partition("|")
+        if not separator or symref:
+            continue
+        prefix = "refs/remotes/"
+        if refname.startswith(prefix):
+            branches.append(refname.removeprefix(prefix))
+    return branches
+
+
 def repository_health(repo: Path, config: dict[str, Any], settled: bool) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -413,8 +572,12 @@ def repository_health(repo: Path, config: dict[str, Any], settled: bool) -> tupl
         (errors if settled else warnings).append(message)
 
     upstream = git(repo, "rev-parse", "--abbrev-ref", f"{default}@{{upstream}}", check=False)
+    governed_remote: str | None = None
     if upstream.returncode == 0:
         upstream_name = upstream.stdout.strip()
+        governed_remote = git(repo, "config", "--get", f"branch.{default}.remote", check=False).stdout.strip()
+        if governed_remote == ".":
+            governed_remote = None
         counts = git(repo, "rev-list", "--left-right", "--count", f"{upstream_name}...{default}")
         behind, ahead = (int(item) for item in counts.stdout.split())
         if behind:
@@ -435,17 +598,20 @@ def repository_health(repo: Path, config: dict[str, Any], settled: bool) -> tupl
         message = f"Unintegrated local branch {branch} has {unique} unique commit(s)"
         (errors if settled else warnings).append(message)
 
-    remote_branches = git(repo, "for-each-ref", "--format=%(refname:short)", "refs/remotes/origin", check=False).stdout.splitlines()
-    for remote_branch in remote_branches:
-        short = remote_branch.removeprefix("origin/")
-        if short in {default, "HEAD"} or remote_branch.endswith("/HEAD"):
-            continue
-        if git(repo, "merge-base", "--is-ancestor", remote_branch, default, check=False).returncode == 0:
-            warnings.append(f"Merged remote branch remains: {remote_branch}")
-            continue
-        unique = git(repo, "rev-list", "--count", f"{default}..{remote_branch}", check=False).stdout.strip()
-        message = f"Unintegrated remote branch {remote_branch} has {unique or '?'} unique commit(s)"
-        (errors if settled else warnings).append(message)
+    for remote in git(repo, "remote").stdout.splitlines():
+        for remote_branch in remote_branch_refs(repo, remote):
+            short = remote_branch.removeprefix(f"{remote}/")
+            if remote != governed_remote:
+                warnings.append(f"Additional remote branch observed: {remote_branch} (not governed)")
+                continue
+            if short == default:
+                continue
+            if git(repo, "merge-base", "--is-ancestor", remote_branch, default, check=False).returncode == 0:
+                warnings.append(f"Merged remote branch remains: {remote_branch}")
+                continue
+            unique = git(repo, "rev-list", "--count", f"{default}..{remote_branch}", check=False).stdout.strip()
+            message = f"Unintegrated remote branch {remote_branch} has {unique or '?'} unique commit(s)"
+            (errors if settled else warnings).append(message)
 
     root = repo.resolve()
     for record in worktree_records(repo):
@@ -479,6 +645,12 @@ def print_repository_inventory(repo: Path, config: dict[str, Any]) -> None:
             unique = git(repo, "rev-list", "--count", f"{default}..{branch}").stdout.strip()
             state = f"{unique} unique commit(s)"
         print(f"[branch] {branch}\t{state}")
+    governed_remote = git(repo, "config", "--get", f"branch.{default}.remote", check=False).stdout.strip()
+    for remote in git(repo, "remote").stdout.splitlines():
+        role = "governed" if remote == governed_remote else "additional"
+        print(f"[remote] {remote}\t{role}")
+        for remote_branch in remote_branch_refs(repo, remote):
+            print(f"[remote-branch] {remote_branch}\t{role}")
     for record in worktree_records(repo):
         state = "prunable" if "prunable" in record else "detached" if "detached" in record else "attached"
         print(f"[worktree] {record.get('worktree', '?')}\t{state}")
@@ -512,7 +684,6 @@ def audit(repo: Path) -> tuple[list[str], list[str]]:
         if not is_repo_root(repo):
             return ["Path is not the Git repository root"], warnings
         config = load_config(repo)
-        errors.extend(config_errors(config))
         version = read_version(repo, config)
         agents = repo / "AGENTS.md"
         if not agents.exists() or MARKER not in agents.read_text(encoding="utf-8"):
@@ -639,10 +810,25 @@ def parse_message(message: str) -> tuple[str, str]:
     match = CONVENTIONAL.fullmatch(subject)
     if not match:
         raise ValueError("Commit subject must follow Conventional Commits")
-    impacts = IMPACT.findall(message)
+    trailers = subprocess.run(
+        ["git", "interpret-trailers", "--parse"],
+        input=message,
+        text=True,
+        capture_output=True,
+        encoding="utf-8",
+    )
+    if trailers.returncode:
+        raise ValueError(trailers.stderr.strip() or "Could not parse commit trailers")
+    impacts = []
+    for line in trailers.stdout.splitlines():
+        key, separator, value = line.partition(":")
+        if separator and key.strip().casefold() == "release-impact":
+            impacts.append(value.strip().casefold())
     if len(impacts) != 1:
         raise ValueError("Commit message needs exactly one Release-Impact footer")
     impact = impacts[0]
+    if impact not in {"none", "patch", "minor", "major"}:
+        raise ValueError("Release-Impact must be none, patch, minor, or major")
     if match.group("type") == "feat" and impact not in {"minor", "major"}:
         raise ValueError("feat commits require minor or major impact")
     if match.group("type") == "fix" and impact not in {"patch", "major"}:
@@ -700,6 +886,56 @@ def sync_version(repo: Path, check: bool) -> int:
     return 0
 
 
+def atomic_write_set(updates: list[tuple[Path, str]]) -> None:
+    prepared: list[tuple[Path, Path]] = []
+    originals: dict[Path, tuple[bytes | None, int | None]] = {}
+    replaced: list[Path] = []
+    try:
+        for path, content in updates:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            originals[path] = (
+                path.read_bytes() if path.exists() else None,
+                stat.S_IMODE(path.stat().st_mode) if path.exists() else None,
+            )
+            descriptor, raw_temp = tempfile.mkstemp(prefix=f".{path.name}.repo-policy-", dir=path.parent)
+            os.close(descriptor)
+            temp_path = Path(raw_temp)
+            temp_path.write_text(content, encoding="utf-8", newline="\n")
+            if path.exists():
+                os.chmod(temp_path, stat.S_IMODE(path.stat().st_mode))
+            prepared.append((path, temp_path))
+
+        for path, temp_path in prepared:
+            os.replace(temp_path, path)
+            replaced.append(path)
+    except OSError as exc:
+        rollback_errors: list[str] = []
+        for path in reversed(replaced):
+            try:
+                original, original_mode = originals[path]
+                if original is None:
+                    path.unlink(missing_ok=True)
+                    continue
+                descriptor, raw_rollback = tempfile.mkstemp(
+                    prefix=f".{path.name}.repo-policy-rollback-", dir=path.parent
+                )
+                os.close(descriptor)
+                rollback = Path(raw_rollback)
+                rollback.write_bytes(original)
+                if original_mode is not None:
+                    os.chmod(rollback, original_mode)
+                os.replace(rollback, path)
+            except OSError as rollback_exc:
+                rollback_errors.append(f"{path}: {rollback_exc}")
+        detail = f"Atomic update failed and was rolled back: {exc}"
+        if rollback_errors:
+            detail += "; rollback errors: " + "; ".join(rollback_errors)
+        raise OSError(detail) from exc
+    finally:
+        for _, temp_path in prepared:
+            temp_path.unlink(missing_ok=True)
+
+
 def prepare_release(repo: Path, requested: str) -> int:
     try:
         requested = valid_version(requested)
@@ -724,15 +960,62 @@ def prepare_release(repo: Path, requested: str) -> int:
         body = match.group("body").strip()
         released = f"## [Unreleased]\n\n## [{requested}] - {dt.date.today().isoformat()}\n\n{body}\n\n"
         next_changelog = changelog[: match.start()] + released + changelog[match.end() :]
-        updates = mirror_updates(repo, config, requested)
-        write(repo_path(repo, str(config.get("canonical_version_file", "VERSION"))), requested + "\n")
-        write(changelog_path, next_changelog)
-        for path, _, rendered in updates:
-            write(path, rendered)
+        mirror_renderings = mirror_updates(repo, config, requested)
+        updates = [
+            (repo_path(repo, str(config.get("canonical_version_file", "VERSION"))), requested + "\n"),
+            (changelog_path, next_changelog),
+            *((path, rendered) for path, _, rendered in mirror_renderings),
+        ]
+        if len({path.resolve() for path, _ in updates}) != len(updates):
+            raise ValueError("Release targets must not overlap")
+        atomic_write_set(updates)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         return fail(str(exc))
     print(f"[release] prepared {current} -> {requested}")
     return 0
+
+
+def terminate_process_tree(process: subprocess.Popen[Any]) -> None:
+    if process.poll() is not None:
+        return
+    if os.name == "nt":
+        result = subprocess.run(
+            ["taskkill", "/PID", str(process.pid), "/T", "/F"],
+            text=True,
+            capture_output=True,
+            encoding="utf-8",
+        )
+        try:
+            process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait(timeout=5)
+        if result.returncode and process.returncode is None:
+            raise OSError(result.stderr.strip() or "Could not terminate timed-out verification process tree")
+        return
+    try:
+        os.killpg(process.pid, signal.SIGTERM)
+        process.wait(timeout=5)
+    except ProcessLookupError:
+        return
+    except subprocess.TimeoutExpired:
+        os.killpg(process.pid, signal.SIGKILL)
+        process.wait(timeout=5)
+
+
+def run_verification_command(command: str, repo: Path, timeout: int) -> int:
+    process = subprocess.Popen(
+        command,
+        cwd=repo,
+        shell=True,
+        start_new_session=(os.name != "nt"),
+        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0,
+    )
+    try:
+        return process.wait(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        terminate_process_tree(process)
+        raise
 
 
 def verify(repo: Path) -> int:
@@ -741,11 +1024,18 @@ def verify(repo: Path) -> int:
     if scan_secrets(repo, "tracked"):
         return 1
     config = load_config(repo)
+    timeout = config.get("verification_timeout_seconds", DEFAULT_VERIFICATION_TIMEOUT_SECONDS)
+    print("[trust] Running repository-configured commands; inspect .repo-policy.json before verifying an untrusted repository")
     for command in config.get("verification_commands", []):
         print(f"[verify] {command}")
-        result = subprocess.run(command, cwd=repo, shell=True)
-        if result.returncode:
-            return fail(f"Verification failed with exit code {result.returncode}")
+        try:
+            returncode = run_verification_command(command, repo, timeout)
+        except subprocess.TimeoutExpired:
+            return fail(f"Verification command timed out after {timeout}s: {command}")
+        except OSError as exc:
+            return fail(f"Could not stop timed-out verification command: {command}: {exc}")
+        if returncode:
+            return fail(f"Verification command failed with exit code {returncode}: {command}")
     print("[ok] repository verification passed")
     return 0
 
@@ -784,6 +1074,7 @@ def scaffold(repo: Path, project_type: str, version: str | None, init_git: bool)
             "github_actions": "off",
             "version_mirrors": [],
             "verification_commands": [],
+            "verification_timeout_seconds": DEFAULT_VERIFICATION_TIMEOUT_SECONDS,
         }
         write(repo / ".repo-policy.json", json.dumps(config, indent=2) + "\n")
         write(repo / ".gitignore", """.env
@@ -795,12 +1086,9 @@ secrets.json
 *.key
 *.p12
 *.pfx
-__pycache__/
-node_modules/
-build/
-dist/
-*.tmp
-*.log
+.DS_Store
+Thumbs.db
+Desktop.ini
 """)
         write(repo / "AGENTS.md", AGENTS)
         write(repo / "VERSION", version + "\n")
