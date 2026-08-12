@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "project_type": "skill",
+  "canonical_version_file": "VERSION",
+  "changelog_file": "CHANGELOG.md",
+  "tag_prefix": "v",
+  "default_branch": "main",
+  "branch_prefix": "agent/",
+  "secret_scanning": "gitleaks-required",
+  "github_actions": "off",
+  "version_mirrors": [],
+  "verification_commands": [
+    "python scripts/check_collection.py",
+    "python -m unittest discover -s tests/repo-readiness -p test_*.py"
+  ]
+}
