@@ -8,11 +8,11 @@ The repository follows the open Agent Skills layout. Each folder under `skills/`
 
 ### `stack-junkie-style`
 
-Applies and visually verifies stack-junkie.com design system across web, desktop, mobile, and application interfaces. It includes the canonical style specimen, design and UX references, a compliance report template, a deterministic report validator, and approved example screenshots.
+Applies and visually verifies stack-junkie.com design system across web, desktop, mobile, and application interfaces. It includes the canonical interactive specimen, design and UX references, approved example screenshots, and a deterministic compliance workflow with proportional `full`, `focused`, and `token` coverage tiers. Visual claims use screenshots while behavioral claims also require runtime evidence.
 
 ### `repo-readiness`
 
-Prepares and governs repositories with a simple main-first workflow for solo development led primarily by coding agents. It covers repository health, README upkeep, version and changelog policy, local hooks, secret scanning, and owner-approved branch reconciliation.
+Prepares and governs repositories with a simple main-first workflow for solo development led primarily by coding agents. It covers multi-remote repository health, README upkeep, version and changelog policy, local hooks, secret scanning, bounded project verification, and owner-approved branch reconciliation.
 
 ## Install
 
@@ -57,10 +57,11 @@ From the repository root:
 ```shell
 python scripts/check_collection.py
 python -m unittest discover -s tests/repo-readiness -p "test_*.py"
+python -m unittest discover -s tests/stack-junkie -p "test_*.py"
 python scripts/repo_policy.py verify --repo .
 ```
 
-Gitleaks is required for the full repository verification command.
+Gitleaks is required for the full repository verification command. Before running `verify` in an unfamiliar clone, inspect the commands in `.repo-policy.json` because they execute as trusted repository code. Each command has a configurable timeout that defaults to 900 seconds and cannot exceed 3600 seconds.
 
 Enable the tracked local hooks in a clone with:
 
