@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-12
+
 ### Added
 
 - Added proportional `full`, `focused`, and `token` Stack Junkie audit tiers with separate runtime evidence for behavioral claims.
