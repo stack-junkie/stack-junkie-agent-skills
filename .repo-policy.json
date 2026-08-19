@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "project_type": "skill",
+  "canonical_version_file": "VERSION",
+  "changelog_file": "CHANGELOG.md",
+  "tag_prefix": "v",
+  "default_branch": "main",
+  "branch_prefix": "codex/",
+  "secret_scanning": "gitleaks-required",
+  "github_actions": "off",
+  "version_mirrors": [
+    {
+      "path": "package.json",
+      "kind": "json",
+      "key": "version"
+    }
+  ],
+  "verification_commands": [
+    "scripts\\run_python.cmd -m unittest discover -s tests -p test_*.py",
+    "scripts\\run_python.cmd C:\\Users\\ckvam\\.codex\\skills\\.system\\skill-creator\\scripts\\quick_validate.py skill\\repo-readiness"
+  ]
+}

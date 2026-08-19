@@ -1,4 +1,4 @@
 interface:
-  display_name: "Repo Readiness"
-  short_description: "ckvam repo readiness guardrails"
-  default_prompt: "Use $repo-readiness to make this project repo-ready with ckvam versioning, changelog, and git guardrails."
+  display_name: "Repository Management"
+  short_description: "Govern repositories with concise durable policy"
+  default_prompt: "Use $repo-readiness to manage this repository with concise, evidence-backed policy."
