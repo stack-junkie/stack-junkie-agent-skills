@@ -1,8 +1,33 @@
+# Local secrets
+.env
+.env.*
+!.env.example
+!.env.template
+credentials.json
+secrets.json
+*.key
+*.p12
+*.pfx
+
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.tmp
-*.log
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .venv/
+venv/
+*.egg-info/
+
+# Generated output and tool state
+node_modules/
 dist/
 build/
+coverage/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+.repo-policy-cache/

@@ -2,10 +2,11 @@
 setlocal
 
 where py >nul 2>nul
-if %ERRORLEVEL%==0 (
-  py -3 %*
-  exit /b %ERRORLEVEL%
-)
+if errorlevel 1 goto use_python
 
+py -3 %*
+exit /b %ERRORLEVEL%
+
+:use_python
 python %*
 exit /b %ERRORLEVEL%

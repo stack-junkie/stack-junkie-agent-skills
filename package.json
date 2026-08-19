@@ -1,12 +1,14 @@
 {
   "name": "repo-readiness",
-  "version": "0.1.0-alpha.0",
+  "version": "1.2.0",
   "private": true,
-  "description": "Personal Codex skill for stack-junkie repo readiness guardrails.",
+  "description": "Solo-developer repository rules and local enforcement for agent-led work.",
   "scripts": {
-    "sync-version": "scripts/run_python.cmd scripts/sync_version.py",
-    "check-version": "scripts/run_python.cmd scripts/sync_version.py --check",
-    "check-release": "scripts/run_python.cmd scripts/check_release_metadata.py --staged",
+    "policy:audit": "scripts/run_python.cmd scripts/repo_policy.py audit --repo .",
+    "policy:verify": "scripts/run_python.cmd scripts/repo_policy.py verify --repo .",
+    "policy:health": "scripts/run_python.cmd scripts/repo_policy.py repo-health --repo .",
+    "scan-secrets": "scripts/run_python.cmd scripts/repo_policy.py scan-secrets --repo . --scope tracked",
+    "prepare-release": "scripts/run_python.cmd scripts/repo_policy.py prepare-release --repo .",
     "install-skill": "scripts/install_skill.cmd"
   }
 }

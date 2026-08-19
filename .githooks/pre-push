@@ -1,3 +1,3 @@
 #!/bin/sh
-scripts/run_python.cmd scripts/sync_version.py --check || exit 1
-python C:/Users/stack-junkie/.codex/skills/.system/skill-creator/scripts/quick_validate.py skill/repo-readiness || exit 1
+. "$(dirname "$0")/_python.sh"
+run_repo_python scripts/repo_policy.py verify --repo .

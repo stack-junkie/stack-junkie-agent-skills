@@ -1,22 +1,37 @@
 # Repository Instructions
 
-This repo is the source of truth for the `repo-readiness` Codex skill.
+<!-- repo-readiness:v1 -->
 
-## Layout
+This repository is the source of truth for the `repo-readiness` skill. The installable payload is under `skill/repo-readiness/`. Never treat the copy under `C:\Users\stack-junkie\.codex\skills` as source.
 
-- `skill/repo-readiness/` is the installable skill payload.
-- Repo-level docs, scripts, hooks, and changelog stay outside the installable skill.
-- `scripts/install_skill.cmd` copies the payload to `C:\Users\stack-junkie\.codex\skills\repo-readiness`.
+## Rules of engagement
 
-## Release Discipline
+- Inspect the live working tree and applicable instructions before editing.
+- Preserve unrelated dirty work. Do not stage, clean, revert, move, or rewrite files outside the active scope.
+- Add only files that serve the product, the operator, or deterministic enforcement. Do not create process documentation for appearance.
+- Keep one writer per file or module. Repartition or serialize overlapping work. Use separate worktrees only for disjoint ownership.
+- Keep `main` as the normal source of truth. Use short-lived `codex/*` branches only for risky or parallel work.
+- Do not start unrelated work on a branch with unintegrated commits. Integrate, deliberately park, or report it first.
+- Run focused checks for the changed behavior, then inspect the final diff.
+- Do not stage, commit, tag, push, publish, or create a pull request unless the user explicitly requests that action.
+- Do not claim independent verification when the implementing agent performed the review.
 
-- Treat `src/version.py` as the version source.
-- Run `scripts\run_python.cmd scripts\sync_version.py --check` before committing.
-- Every material change must bump the semantic version and add a `CHANGELOG.md` entry.
-- Keep the skill payload lean: `SKILL.md`, `agents/openai.yaml`, and only resources that directly help future Codex runs.
+## Version and release policy
 
-## Editing Rules
+- `VERSION` is the only manually edited version source. Other version fields are generated mirrors.
+- Ordinary edits do not change `VERSION`. Record notable user-facing or operator-facing changes under `CHANGELOG.md` `[Unreleased]`.
+- Every release requires the exact version from the user. Never infer or automatically select a patch, minor, major, alpha, beta, or release-candidate version.
+- Prepare releases with `scripts\run_python.cmd scripts\repo_policy.py prepare-release --repo . <version>`.
+- Require Gitleaks for redacted staged, current-tree, and history scans.
+- Keep `.gitignore` relevant to the actual stack and do not create repository clutter.
+- Keep GitHub Actions absent unless the user approves a concrete hosted-check, matrix-test, packaging, or deployment need.
+- Require a concise, current README for maintained products, libraries, tools, and skills. When README.md is touched, review the entire file and repair stale commands, paths, behavior, configuration, links, and limitations.
 
-- Do not edit the installed copy under `.codex\skills` as the source of truth.
-- Edit this repo, validate it, then run `scripts\install_skill.cmd`.
-- Keep Windows paths explicit because this workflow runs on Windows.
+## Required checks
+
+- Audit: `scripts\run_python.cmd scripts\repo_policy.py audit --repo .`
+- Repository health: `scripts\run_python.cmd scripts\repo_policy.py repo-health --repo .`
+- Full history secret scan: `scripts\run_python.cmd scripts\repo_policy.py scan-secrets --repo . --scope history`
+- Full verification: `scripts\run_python.cmd scripts\repo_policy.py verify --repo .`
+- Skill validation: `scripts\run_python.cmd C:\Users\stack-junkie\.codex\skills\.system\skill-creator\scripts\quick_validate.py skill\repo-readiness`
+- Install after validation: `scripts\install_skill.cmd`
