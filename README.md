@@ -8,6 +8,7 @@ Each directory under [`skills/`](skills/) is a self-contained package that follo
 
 | Skill | What it does | Example request |
 |---|---|---|
+| [`drive-project-work`](skills/drive-project-work/) | Keeps consequential implementation work bound to one checkable slice with current evidence. | `Use $drive-project-work to deliver this fix as one bounded slice.` |
 | [`stack-junkie-style`](skills/stack-junkie-style/) | Applies and visually verifies the Stack Junkie interface system across web, desktop, mobile, and application UIs. | `Use $stack-junkie-style to redesign and visually verify this app.` |
 | [`repo-readiness`](skills/repo-readiness/) | Keeps solo, agent-led Git repositories understandable, secure, documented, and releasable. | `Use $repo-readiness to audit and reconcile this repository.` |
 | [`preserve-compaction-continuity`](skills/preserve-compaction-continuity/) | Preserves exact owner context and visibly reports recovery after Codex compaction. | `Use $preserve-compaction-continuity to install transcript-backed compaction recovery.` |
@@ -42,6 +43,18 @@ T3 Code uses the skills installed for its selected underlying provider, so it do
 
 If you do not use Node.js, download or clone the repository and copy only the desired `skills/<skill-name>/` directory into a skill location supported by your agent. Common user-level locations include `~/.agents/skills/` for Codex and `~/.claude/skills/` for Claude Code.
 
+On Windows, the repository installer copies and verifies one package:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_skill.ps1 -Name stack-junkie-style
+```
+
+For `drive-project-work`, explicitly include its Codex lifecycle hook:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_skill.ps1 -Name drive-project-work -InstallCodexHook
+```
+
 ## Use
 
 Invoke a skill explicitly:
@@ -49,6 +62,7 @@ Invoke a skill explicitly:
 ```text
 Use $stack-junkie-style to simplify and restyle this application's UI.
 Use $repo-readiness to prepare this repository for release.
+Use $drive-project-work to deliver this change as one bounded slice.
 ```
 
 Compatible agents may also select a skill automatically when a request clearly matches its description.
@@ -67,10 +81,7 @@ The manager preserves unrelated hooks and recovery packets. Review changed hook 
 For contributors, from the repository root:
 
 ```shell
-python scripts/check_collection.py
-python -m unittest discover -s tests/continuity -p "test_*.py"
-python -m unittest discover -s tests/repo-readiness -p "test_*.py"
-python -m unittest discover -s tests/stack-junkie -p "test_*.py"
+python scripts/check_all.py
 python scripts/repo_policy.py verify --repo .
 ```
 

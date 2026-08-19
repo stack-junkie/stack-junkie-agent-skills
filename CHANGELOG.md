@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - Added concise bug and improvement issue workflows to Repository Management with reusable GitHub templates and verification-before-close guidance.
+- Added `drive-project-work` and its Codex lifecycle hook to the portable skill collection.
+- Added one root installer and one collection-wide validation and test command for all skill packages.
+
+### Changed
+
+- Consolidated repository-policy execution on the implementation shipped inside `repo-readiness`.
 
 ## [1.2.0] - 2026-08-18
 

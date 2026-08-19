@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the canonical Repo Readiness policy shipped in this collection."""
+"""Run the canonical repo-readiness policy implementation from its skill package."""
 
 from pathlib import Path
 import runpy
@@ -13,4 +13,6 @@ POLICY = (
     / "repo_policy.py"
 )
 
-runpy.run_path(str(POLICY), run_name="__main__")
+
+if __name__ == "__main__":
+    runpy.run_path(str(POLICY), run_name="__main__")
