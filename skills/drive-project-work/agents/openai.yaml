@@ -1,0 +1,4 @@
+interface:
+  display_name: "Drive Project Work"
+  short_description: "Keep implementation inside one verified project slice"
+  default_prompt: "Use $drive-project-work to deliver one bounded candidate without scope drift or inflated completion claims."

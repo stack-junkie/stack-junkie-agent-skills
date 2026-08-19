@@ -14,6 +14,7 @@ __pycache__/
 .pytest_cache/
 .coverage
 .repo-policy-cache/
+_migration-safety-*/
 
 .DS_Store
 Thumbs.db
