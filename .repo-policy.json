@@ -12,6 +12,7 @@
   "verification_timeout_seconds": 900,
   "verification_commands": [
     "python scripts/check_collection.py",
+    "python -m unittest discover -s tests/continuity -p test_*.py",
     "python -m unittest discover -s tests/repo-readiness -p test_*.py",
     "python -m unittest discover -s tests/stack-junkie -p test_*.py"
   ]

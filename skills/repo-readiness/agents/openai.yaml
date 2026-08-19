@@ -1,4 +1,4 @@
 interface:
-  display_name: "Repo Readiness"
-  short_description: "Secure, reconcile, and govern agent-led repos"
-  default_prompt: "Use $repo-readiness to prepare, secure, reconcile, and govern this repository for low-friction solo development with coding agents."
+  display_name: "Repository Management"
+  short_description: "Govern repositories with concise durable policy"
+  default_prompt: "Use $repo-readiness to manage this repository with concise, evidence-backed policy."

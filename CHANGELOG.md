@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Added concise bug and improvement issue workflows to Repository Management with reusable GitHub templates and verification-before-close guidance.
+
+## [1.2.0] - 2026-08-18
+
+### Added
+
+- Added `preserve-compaction-continuity` with transcript-backed recovery, a visible post-compaction status report, and preview-first Codex hook management.
+
 ## [1.1.0] - 2026-08-12
 
 ### Added

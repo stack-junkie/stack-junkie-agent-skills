@@ -1,67 +1,80 @@
 # Stack Junkie Agent Skills
 
-Portable agent skills for applying the Stack Junkie interface system and keeping solo, agent-led Git repositories understandable and releasable.
+Portable skills for coding agents. Install only the skill you want, then invoke it by name or ask for the behavior it provides.
 
-The repository follows the open Agent Skills layout. Each folder under `skills/` is a complete package with a `SKILL.md` entrypoint and only the scripts, references, and assets that skill needs.
+Each directory under [`skills/`](skills/) is a self-contained package that follows the open Agent Skills format: a required `SKILL.md` plus only the scripts, references, and assets that skill needs.
 
-## Included skills
+## Available skills
 
-### `stack-junkie-style`
-
-Applies and visually verifies Christopher Kvamme's Stack Junkie design system across web, desktop, mobile, and application interfaces. It includes the canonical interactive specimen, design and UX references, approved example screenshots, and a deterministic compliance workflow with proportional `full`, `focused`, and `token` coverage tiers. Visual claims use screenshots while behavioral claims also require runtime evidence.
-
-### `repo-readiness`
-
-Prepares and governs repositories with a simple main-first workflow for solo development led primarily by coding agents. It covers multi-remote repository health, README upkeep, version and changelog policy, local hooks, secret scanning, bounded project verification, and owner-approved branch reconciliation.
+| Skill | What it does | Example request |
+|---|---|---|
+| [`stack-junkie-style`](skills/stack-junkie-style/) | Applies and visually verifies the Stack Junkie interface system across web, desktop, mobile, and application UIs. | `Use $stack-junkie-style to redesign and visually verify this app.` |
+| [`repo-readiness`](skills/repo-readiness/) | Keeps solo, agent-led Git repositories understandable, secure, documented, and releasable. | `Use $repo-readiness to audit and reconcile this repository.` |
+| [`preserve-compaction-continuity`](skills/preserve-compaction-continuity/) | Preserves exact owner context and visibly reports recovery after Codex compaction. | `Use $preserve-compaction-continuity to install transcript-backed compaction recovery.` |
 
 ## Install
 
-Clone the collection:
+The easiest cross-client option is the open [`skills` CLI](https://github.com/vercel-labs/skills). It detects supported agents and installs only the skill you select.
+
+List the skills without installing anything:
 
 ```shell
-git clone https://github.com/stack-junkie/stack-junkie-agent-skills.git
-cd stack-junkie-agent-skills
+npx skills add stack-junkie/stack-junkie-agent-skills --list
 ```
 
-Copy or symlink the desired skill folder into the personal skill directory used by your agent:
+Install one skill globally:
 
-| Client | Personal skill directory |
-|---|---|
-| Codex | `~/.codex/skills/<skill-name>` |
-| Claude Code | `~/.claude/skills/<skill-name>` |
-
-For example, in PowerShell:
-
-```powershell
-Copy-Item -Recurse -Force .\skills\stack-junkie-style "$HOME\.codex\skills\"
-Copy-Item -Recurse -Force .\skills\repo-readiness "$HOME\.codex\skills\"
+```shell
+npx skills add stack-junkie/stack-junkie-agent-skills --skill stack-junkie-style -g
 ```
 
-Change `.codex` to `.claude` to install the same canonical packages for Claude Code. T3 Code runs the selected Codex, Claude Code, or other provider harness, so install the skills for the provider selected in T3 Code. No T3-specific copy exists.
+Replace `stack-junkie-style` with any name in the catalog. To target a particular client instead of using automatic detection, add `--agent codex` or `--agent claude-code`.
+
+Install every skill only if you actually want the whole collection:
+
+```shell
+npx skills add stack-junkie/stack-junkie-agent-skills --skill '*' -g
+```
+
+T3 Code uses the skills installed for its selected underlying provider, so it does not need a separate T3-specific package.
+
+### Manual install
+
+If you do not use Node.js, download or clone the repository and copy only the desired `skills/<skill-name>/` directory into a skill location supported by your agent. Common user-level locations include `~/.agents/skills/` for Codex and `~/.claude/skills/` for Claude Code.
 
 ## Use
 
-Invoke the skills by name or ask for the behavior they describe:
+Invoke a skill explicitly:
 
 ```text
-Use $stack-junkie-style to redesign and visually verify this application's UI.
-Use $repo-readiness to audit and reconcile this repository.
+Use $stack-junkie-style to simplify and restyle this application's UI.
+Use $repo-readiness to prepare this repository for release.
 ```
 
-The skill descriptions also allow compatible agents to select them automatically when the request clearly matches.
+Compatible agents may also select a skill automatically when a request clearly matches its description.
 
-## Validate
+After installing `preserve-compaction-continuity` for Codex, preview and apply its user-level hook setup from the installed skill directory:
 
-From the repository root:
+```shell
+python scripts/manage.py install
+python scripts/manage.py install --apply
+```
+
+The manager preserves unrelated hooks and recovery packets. Review changed hook definitions through `/hooks` when Codex requests trust confirmation.
+
+## Validate the collection
+
+For contributors, from the repository root:
 
 ```shell
 python scripts/check_collection.py
+python -m unittest discover -s tests/continuity -p "test_*.py"
 python -m unittest discover -s tests/repo-readiness -p "test_*.py"
 python -m unittest discover -s tests/stack-junkie -p "test_*.py"
 python scripts/repo_policy.py verify --repo .
 ```
 
-Gitleaks is required for the full repository verification command. Before running `verify` in an unfamiliar clone, inspect the commands in `.repo-policy.json` because they execute as trusted repository code. Each command has a configurable timeout that defaults to 900 seconds and cannot exceed 3600 seconds.
+The full repository verification requires Gitleaks. Before running `verify` in an unfamiliar clone, inspect the commands in `.repo-policy.json` because they execute as trusted repository code.
 
 Enable the tracked local hooks in a clone with:
 
@@ -71,14 +84,14 @@ git config core.hooksPath .githooks
 
 ## Releases
 
-Root `VERSION` is the only manually edited version source for the collection. Ordinary notable changes go under `[Unreleased]` in `CHANGELOG.md`. Release preparation requires the owner's exact next SemVer:
+Root `VERSION` is the collection's only manually edited version source. Ordinary notable changes go under `[Unreleased]` in `CHANGELOG.md`. Release preparation requires the owner's exact next SemVer:
 
 ```shell
 python scripts/repo_policy.py prepare-release --repo . <exact-version>
 ```
 
-The release command prepares local files only. Committing, tagging, pushing, and publishing remain separate owner-authorized actions.
+The command prepares local release files only. Committing, tagging, pushing, and publishing are separate authorized actions.
 
 ## License
 
-MIT. See `LICENSE`.
+MIT. See [`LICENSE`](LICENSE).
