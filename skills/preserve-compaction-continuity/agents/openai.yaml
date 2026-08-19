@@ -1,0 +1,4 @@
+interface:
+  display_name: "Compaction Continuity"
+  short_description: "Preserve task continuity across compaction"
+  default_prompt: "Use $preserve-compaction-continuity to install or verify transcript-backed Codex compaction recovery."

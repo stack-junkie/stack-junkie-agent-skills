@@ -1,9 +1,9 @@
 ---
 name: repo-readiness
-description: Prepare, audit, reconcile, secure, govern, document, or release a Git repository using Stack Junkie's simple main-first workflow for solo agent-led work. Use when an agent is asked to make a project repo-ready, create or refresh its README, merge or clean up branches and worktrees, reconcile diverged work, evaluate .gitignore, prevent secret leaks, govern agent edits, synchronize canonical versions, curate changelogs, prepare an exact release, configure local hooks, or decide whether GitHub workflows are justified.
+description: Prepare, audit, reconcile, secure, govern, document, or release a Git repository using Stack Junkie's simple main-first workflow for solo agent-led work. Use when an agent is asked to make a project repo-ready, document or triage GitHub issues, create or refresh its README, merge or clean up branches and worktrees, reconcile diverged work, evaluate .gitignore, prevent secret leaks, govern agent edits, synchronize canonical versions, curate changelogs, prepare an exact release, configure local hooks, or decide whether GitHub workflows are justified.
 ---
 
-# Repo Readiness stack-junkie
+# Repository Management
 
 Build a low-friction repository that coding agents can change safely and the owner can understand quickly.
 
@@ -222,6 +222,8 @@ Tracked hooks provide fast feedback, but all local hooks can be bypassed. The po
 
 ## GitHub policy
 
+For documenting, creating, triaging, updating, linking, verifying, or closing repository issues, read [references/issue-management.md](references/issue-management.md). Use its concise formats and add optional detail only when it changes understanding, prioritization, reproduction, or verification. Reusable Markdown templates are in `assets/github/ISSUE_TEMPLATE/`; install or adapt them only when requested.
+
 Create no GitHub Actions workflow by default. Local repositories and single-platform personal tools usually gain little from hosted YAML that repeats local checks.
 
 Recommend one minimal workflow only when at least one concrete need exists:
@@ -247,6 +249,8 @@ Report:
 - README status when it was created, changed, or found stale;
 - commit, tag, push, remote, pull request, and release status separately;
 - independent review status and any remaining owner decision.
+
+For issue-only work, report the issues created, updated, linked, or closed and any missing owner decision. Omit unrelated repository-governance status.
 
 Keep the handoff proportional. For branch-only cleanup, omit version, release, hook, and publication details that did not apply.
 
