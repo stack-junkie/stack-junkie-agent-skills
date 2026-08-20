@@ -1,110 +1,40 @@
 ---
 name: manage-codex-work
-description: Review and coordinate work across Codex conversations from the current chat. Use when the user says "use the coordinator," "run Thread Steward," asks what needs attention across chats, wants related or moved conversations reconciled, wants work parked or resurfaced, or wants validation theater and stalled agent work identified before deciding what to do next.
+description: Review and coordinate work across Codex tasks from the current conversation using native Codex task tools. Use when the user asks what needs attention across tasks, wants related conversations reconciled, wants work parked or resurfaced, or asks to manage Codex work.
 ---
 
 # Manage Codex Work
 
-Act as Thread Steward inside the current Codex conversation. Do not open a separate dashboard, start a persistent service, schedule background work, or use Computer Use.
+Build one concise decision inbox from live Codex task state. Use only native task tools exposed by the current Codex client. Do not start a private app server, parse session files, create a parallel state database, or build a fallback coordinator.
 
-## Build a current review
+If native task tools are unavailable, say that the task list cannot be inspected from the current client and stop.
 
-Run the bundled read-only scanner:
+## Review current work
 
-```shell
-python scripts/thread_steward.py scan --days 14
-```
+1. List recent and active tasks with the native task-list tool.
+2. Read only the tasks needed to determine current state, ownership, or a possible relationship.
+3. Use compact wait snapshots when following active work. Do not repeatedly reread unchanged tasks.
+4. Distinguish owner requests, assistant proposals, implementation evidence, and owner acceptance.
+5. Do not call work complete merely because an assistant claimed completion.
 
-Resolve the bundled script relative to this skill directory. The scanner uses Codex's local thread interface, reads recent conversations plus older loaded or explicitly tracked conversations, and emits compact JSON. It contains no turn-start, steering, interrupt, archive, or delete operation. When Codex exposes the invoking thread ID, the scanner keeps that conversation only as a relationship anchor and labels it `current` so an in-progress coordinator turn cannot appear under `NEEDS YOU`.
-
-Treat scanner categories as evidence hints, not final judgment. Read the returned snippets and relationship candidates. Refresh the scan when another conversation may have changed while preparing the review.
-
-## Reconcile workstreams
-
-Group conversations only when the evidence supports one continuing objective.
-
-Strong evidence includes:
-
-- an explicit move, takeover, continuation, or predecessor statement;
-- a parent or fork relationship;
-- the same distinctive issue, artifact, feature, or requirement set;
-- a later conversation clearly assuming ownership of an earlier unfinished task.
-
-Do not merge conversations solely because they share a repository or broad topic. If uncertain, show every instance under `MAY BE RELATED` and ask the owner to confirm the relationship. Keep confirmed owner requirements separate from assistant proposals, implementation evidence, and acceptance.
-
-Choose the canonical conversation from explicit owner direction. Otherwise prefer the latest conversation that clearly owns the objective and contains the newest requirements. Never hide a conflicting active conversation.
-
-Record an owner-confirmed relationship with:
-
-```shell
-python scripts/thread_steward.py state relate --workstream-id <id> --title <title> --canonical <thread-id> --related <thread-id> [--related <thread-id>]
-```
+Group tasks only when they clearly share one continuing objective. Strong evidence includes an explicit continuation or handoff, a parent or fork relationship, the same distinctive issue or artifact, or a later task clearly assuming ownership of earlier unfinished work. Sharing a repository or broad topic is not enough.
 
 ## Present one decision inbox
 
-Use this order and omit empty sections:
+Use only the sections that contain items:
 
 1. `NEEDS YOU`
 2. `AT RISK`
 3. `WORKING`
 4. `PARKED`
-5. `DUE TO RESURFACE`
-6. `MAY BE RELATED`
+5. `MAY BE RELATED`
 
-Keep each item compact:
+For each item, state the recognizable task, one verified state sentence, why it needs attention, and one recommended action. Keep the inbox short.
 
-```text
-N1. Short workstream title
-    Canonical: conversation name or recognizable opening
-    State: one verified sentence
-    Why now: one sentence
+Place work under `AT RISK` when the current evidence shows process work replacing the requested product result, repeated activity without changed inputs, scope substitution, or self-certification without owner acceptance. Ordinary focused checks are not automatically process theater.
 
-    A. Recommended answer
-    B. Alternative
-    C. Park
-```
+## Apply approved actions
 
-State when the scan was performed. Give one recommended answer whenever evidence supports it. Do not call work complete merely because an assistant claimed completion. Distinguish direct observation, implementation evidence, tests, assistant claims, and owner acceptance.
+Preview any cross-task message, archive, handoff, pin, or relationship-changing action before applying it unless the owner already gave exact authorization. Use native task tools for the approved action. Never create another coordination runtime to compensate for a missing tool.
 
-## Apply the Reality Guard
-
-Place a workstream under `AT RISK` when current conversation evidence shows:
-
-- validation machinery replacing direct observation of a visible or interactive result;
-- repeated commands or planning without changed inputs;
-- proxy completion based on builds, tests, screenshots, or self-written rubrics;
-- scope substitution toward a more measurable adjacent task;
-- self-certification without owner acceptance;
-- growing auxiliary work while the requested product surface remains untouched.
-
-Do not treat ordinary focused tests as theater. For a visible UI outcome, recommend opening and inspecting the real interface before creating new validators. Draft a correction for the owner to approve, but do not steer another conversation in the read-only release.
-
-## Park and resurface
-
-Park a workstream with:
-
-```shell
-python scripts/thread_steward.py state park --workstream-id <id> --title <title> --canonical <thread-id> --reason <reason> --trigger-type <next_review|date|dependency|manual> [--trigger-value <value>] --original-instruction <owner text>
-```
-
-Parking an idle item is immediate. If current evidence shows an active turn, describe it as pending until that turn finishes. Do not interrupt it.
-
-Parked items leave the ordinary inbox. A `next_review` or due `date` trigger returns under `DUE TO RESURFACE`. Dependency and manual triggers remain parked until explicitly resumed:
-
-```shell
-python scripts/thread_steward.py state resume --workstream-id <id>
-```
-
-Close only the local workstream record:
-
-```shell
-python scripts/thread_steward.py state close --workstream-id <id>
-```
-
-Never archive or delete a Codex conversation when closing a workstream.
-
-## Respect the action gate
-
-This release is read-only toward other conversations. It may scan threads and record local owner decisions, relationships, or parking state. It must not send, steer, interrupt, archive, or delete across chats.
-
-When the owner answers inbox items, prepare the exact destination and minimal context-wrapped message as a batch preview. State plainly that dispatch remains disabled until the owner accepts the live read-only inbox and the action slice is implemented.
+Closing a work item does not delete its Codex task. Preserve conflicting active work and report it rather than silently merging or interrupting it.

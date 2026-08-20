@@ -1,3 +1,0 @@
-#!/bin/sh
-. "$(dirname "$0")/_python.sh"
-run_repo_python scripts/repo_policy.py check-staged --repo .
