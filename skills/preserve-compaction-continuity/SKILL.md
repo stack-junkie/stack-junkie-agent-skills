@@ -1,6 +1,6 @@
 ---
 name: preserve-compaction-continuity
-description: Preserve and restore task continuity across Codex automatic or manual context compaction using transcript-backed recovery packets, lifecycle hooks, and a visible post-compaction report. Use when installing, auditing, repairing, removing, or verifying compaction recovery; when Codex loses owner requests or the continuation point after compaction; or when a user wants recent messages and current work rehydrated automatically.
+description: Preserve and restore task continuity across Codex automatic or manual context compaction using transcript-backed recovery packets, lifecycle hooks, and a visible post-compaction report. Use when installing, repairing, or removing compaction recovery; when Codex loses owner requests or the continuation point after compaction; or when a user wants recent messages and current work rehydrated automatically.
 ---
 
 # Preserve Compaction Continuity
@@ -75,14 +75,3 @@ Remove only this skill's installed package, runtime, and hook handlers. Never pr
 Store recovery packets under `CODEX_CONTINUITY_HOME` when set. Otherwise use `CODEX_HOME/continuity`, falling back to `~/.codex/continuity`. Treat the files as private because they contain prompts and tool excerpts.
 
 Do not delete recovery sessions automatically.
-
-## Verify behavior
-
-Run focused behavior and installation checks:
-
-```shell
-python -m unittest discover -s tests/continuity -p "test_*.py" -v
-python scripts/check_collection.py
-```
-
-For live validation, invoke `/compact` only with owner approval. Confirm the recovery report appears before work resumes and compare its facts with the generated manifest and recovery packet. Unit tests alone do not prove that a Codex client rendered the report.

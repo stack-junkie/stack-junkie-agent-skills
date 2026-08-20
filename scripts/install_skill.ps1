@@ -2,8 +2,7 @@ param(
     [Parameter(Mandatory = $true)]
     [ValidatePattern('^[a-z0-9]+(?:-[a-z0-9]+)*$')]
     [string]$Name,
-    [string]$SkillsDir = $(if ($env:CODEX_SKILLS_DIR) { $env:CODEX_SKILLS_DIR } else { Join-Path $env:USERPROFILE '.codex\skills' }),
-    [switch]$InstallCodexHook
+    [string]$SkillsDir = $(if ($env:CODEX_SKILLS_DIR) { $env:CODEX_SKILLS_DIR } else { Join-Path $env:USERPROFILE '.codex\skills' })
 )
 
 $ErrorActionPreference = 'Stop'
@@ -18,7 +17,7 @@ if (-not (Test-Path -LiteralPath $VersionFile -PathType Leaf)) {
     throw "Skill package is missing VERSION: $Name"
 }
 $SkillVersion = (Get-Content -LiteralPath $VersionFile -Raw).Trim()
-if ($SkillVersion -notmatch '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$') {
+if ($SkillVersion -notmatch '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$') {
     throw "Skill package has an invalid Semantic Version: $Name ($SkillVersion)"
 }
 
@@ -64,23 +63,3 @@ if ($Difference) {
     throw "Installed package does not match its monorepo source: $Name"
 }
 Write-Host "[install] Wrote and verified $DestinationSkill (version $SkillVersion)"
-
-if ($InstallCodexHook) {
-    if ($Name -ne 'drive-project-work') {
-        throw '-InstallCodexHook is supported only for drive-project-work.'
-    }
-    $CodexHome = Split-Path -Parent $ResolvedSkillsDir
-    $HooksDir = Join-Path $CodexHome 'hooks'
-    $HookSource = Join-Path $DestinationSkill 'scripts\drive_project_work_hook.py'
-    $HookRuntime = Join-Path $HooksDir 'drive_project_work_hook.py'
-    New-Item -ItemType Directory -Force -Path $HooksDir | Out-Null
-    Copy-Item -LiteralPath $HookSource -Destination $HookRuntime -Force
-    if ((Get-Sha256 $HookSource) -ne (Get-Sha256 $HookRuntime)) {
-        throw 'Installed drive-project-work hook does not match its package source.'
-    }
-    & py -3 (Join-Path $DestinationSkill 'scripts\install_hooks.py') --codex-home $CodexHome --hook-script $HookRuntime
-    if ($LASTEXITCODE -ne 0) {
-        throw 'drive-project-work hook registration failed.'
-    }
-    Write-Host "[install] Registered drive-project-work lifecycle hooks in $CodexHome"
-}
