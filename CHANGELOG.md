@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-08-19
+
+### Changed
+
+- **Manage Codex Work (`manage-codex-work`) 2.0.0:** Replaced the custom Thread Steward scanner and state runtime with native Codex task tools.
+- **Stack Junkie Style (`stack-junkie-style`) 2.0.0:** Removed compliance reports, audit levels, evidence matrices, validator scripts, and independent-review requirements while retaining the design system and direct product-preview guidance.
+- **Preserve Compaction Continuity (`preserve-compaction-continuity`) 1.0.1:** Removed test-running instructions without changing its recovery runtime or integrity protections.
+- **Installer:** Removed the Drive hook option and Drive-specific installation code while retaining version and copy-integrity checks.
+
+### Removed
+
+- Removed `repo-readiness`, `drive-project-work`, all repository test suites, tracked Git hooks, repository policies, collection validators, and validation runners.
+
 ## [1.3.0] - 2026-08-19
 
 ### Added
