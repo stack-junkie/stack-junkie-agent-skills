@@ -37,6 +37,11 @@ class InstallSkillTests(unittest.TestCase):
             second = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, encoding="utf-8")
             self.assertEqual(second.returncode, 0, second.stdout + second.stderr)
             self.assertTrue((skills_dir / "drive-project-work" / "SKILL.md").is_file())
+            self.assertEqual(
+                (skills_dir / "drive-project-work" / "VERSION").read_text(encoding="utf-8").strip(),
+                "0.2.0-alpha.0",
+            )
+            self.assertIn("version 0.2.0-alpha.0", first.stdout)
             self.assertTrue((codex_home / "hooks" / "drive_project_work_hook.py").is_file())
             self.assertTrue((codex_home / "hooks.json").is_file())
 

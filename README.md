@@ -2,13 +2,14 @@
 
 Portable skills for coding agents. Install only the skill you want, then invoke it by name or ask for the behavior it provides.
 
-Each directory under [`skills/`](skills/) is a self-contained package that follows the open Agent Skills format: a required `SKILL.md` plus only the scripts, references, and assets that skill needs.
+Each directory under [`skills/`](skills/) is a self-contained, independently versioned package that follows the open Agent Skills format: a required `SKILL.md`, a `VERSION`, and only the scripts, references, and assets that skill needs.
 
 ## Available skills
 
 | Skill | What it does | Example request |
 |---|---|---|
 | [`drive-project-work`](skills/drive-project-work/) | Keeps consequential implementation work bound to one checkable slice with current evidence. | `Use $drive-project-work to deliver this fix as one bounded slice.` |
+| [`manage-codex-work`](skills/manage-codex-work/) | Reviews recent and active Codex conversations as one decision inbox without silently merging related work. | `Use $manage-codex-work to show what needs my attention across chats.` |
 | [`stack-junkie-style`](skills/stack-junkie-style/) | Applies and visually verifies the Stack Junkie interface system across web, desktop, mobile, and application UIs. | `Use $stack-junkie-style to redesign and visually verify this app.` |
 | [`repo-readiness`](skills/repo-readiness/) | Keeps solo, agent-led Git repositories understandable, secure, documented, and releasable. | `Use $repo-readiness to audit and reconcile this repository.` |
 | [`preserve-compaction-continuity`](skills/preserve-compaction-continuity/) | Preserves exact owner context and visibly reports recovery after Codex compaction. | `Use $preserve-compaction-continuity to install transcript-backed compaction recovery.` |
@@ -63,6 +64,7 @@ Invoke a skill explicitly:
 Use $stack-junkie-style to simplify and restyle this application's UI.
 Use $repo-readiness to prepare this repository for release.
 Use $drive-project-work to deliver this change as one bounded slice.
+Use $manage-codex-work to review my recent and active Codex conversations.
 ```
 
 Compatible agents may also select a skill automatically when a request clearly matches its description.
@@ -95,13 +97,15 @@ git config core.hooksPath .githooks
 
 ## Releases
 
-Root `VERSION` is the collection's only manually edited version source. Ordinary notable changes go under `[Unreleased]` in `CHANGELOG.md`. Release preparation requires the owner's exact next SemVer:
+Every `skills/<name>/VERSION` is the source of truth for that independently installable skill. Bump only a skill that changed, and record its version in the root `CHANGELOG.md`. Skill release tags use `<skill-name>@<version>`.
+
+Root `VERSION` identifies the collection snapshot and changes only for a collection release. Ordinary notable changes go under `[Unreleased]` in `CHANGELOG.md`. Collection release tags use `v<version>`, and preparation requires the owner's exact next SemVer:
 
 ```shell
 python scripts/repo_policy.py prepare-release --repo . <exact-version>
 ```
 
-The command prepares local release files only. Committing, tagging, pushing, and publishing are separate authorized actions.
+The command prepares local collection release files only. Committing, skill or collection tagging, pushing, and publishing are separate authorized actions.
 
 ## License
 
