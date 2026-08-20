@@ -6,15 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-08-19
+
 ### Added
 
-- Added concise bug and improvement issue workflows to Repository Management with reusable GitHub templates and verification-before-close guidance.
-- Added `drive-project-work` and its Codex lifecycle hook to the portable skill collection.
-- Added one root installer and one collection-wide validation and test command for all skill packages.
+- **Thread Steward (`manage-codex-work`) 1.0.0:** Added read-only reconciliation of recent and active Codex conversations, a concise decision inbox, local parking, relationship detection, and validation-theatre warnings without cross-chat actions.
+- **Drive Project Work (`drive-project-work`) 0.2.0-alpha.0:** Added bounded delivery slices and the optional Codex lifecycle hook to the portable skill collection.
+- **Repository Management (`repo-readiness`) 1.2.0:** Added concise bug and improvement issue workflows with reusable GitHub templates and verification-before-close guidance.
+- **Collection:** Added one root installer and one collection-wide validation and test command for all skill packages.
 
 ### Changed
 
-- Consolidated repository-policy execution on the implementation shipped inside `repo-readiness`.
+- **Collection:** Established independent SemVer sources for every skill while retaining root `VERSION` for collection snapshots.
+- **Repository Management:** Consolidated repository-policy execution on the implementation shipped inside `repo-readiness`.
 
 ## [1.2.0] - 2026-08-18
 

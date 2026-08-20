@@ -1,0 +1,4 @@
+interface:
+  display_name: "Thread Steward"
+  short_description: "Review and coordinate work across Codex chats"
+  default_prompt: "Use $manage-codex-work to review my recent and active Codex conversations and show what needs my attention."

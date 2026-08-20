@@ -12,6 +12,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
 NAME = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+SEMVER = re.compile(
+    r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
+    r"(?:-((?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*)"
+    r"(?:\.(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*))*))?"
+    r"(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$"
+)
 FRONTMATTER = re.compile(r"\A---\r?\n(?P<body>.*?)\r?\n---\r?\n", re.DOTALL)
 LOCAL_ABSOLUTE = re.compile(r"(?:[A-Za-z]:[\\/]+Users[\\/]|/Users/[^/]+/|/home/[^/]+/)")
 
@@ -34,8 +40,19 @@ def metadata(text: str) -> dict[str, str]:
 def validate_skill(skill: Path) -> list[str]:
     errors: list[str] = []
     entrypoint = skill / "SKILL.md"
+    version_file = skill / "VERSION"
     if not entrypoint.is_file():
         return [f"{skill.name}: missing SKILL.md"]
+    if not version_file.is_file():
+        errors.append(f"{skill.name}: missing VERSION")
+    else:
+        try:
+            version = version_file.read_text(encoding="utf-8").strip()
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"{skill.name}: VERSION is unreadable: {exc}")
+        else:
+            if not SEMVER.fullmatch(version):
+                errors.append(f"{skill.name}: VERSION is not valid Semantic Versioning")
     try:
         values = metadata(entrypoint.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, ValueError) as exc:

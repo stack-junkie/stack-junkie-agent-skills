@@ -13,6 +13,14 @@ $SourceSkill = Join-Path $RepoRoot "skills\$Name"
 if (-not (Test-Path -LiteralPath (Join-Path $SourceSkill 'SKILL.md') -PathType Leaf)) {
     throw "Unknown or invalid skill package: $Name"
 }
+$VersionFile = Join-Path $SourceSkill 'VERSION'
+if (-not (Test-Path -LiteralPath $VersionFile -PathType Leaf)) {
+    throw "Skill package is missing VERSION: $Name"
+}
+$SkillVersion = (Get-Content -LiteralPath $VersionFile -Raw).Trim()
+if ($SkillVersion -notmatch '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$') {
+    throw "Skill package has an invalid Semantic Version: $Name ($SkillVersion)"
+}
 
 New-Item -ItemType Directory -Force -Path $SkillsDir | Out-Null
 $ResolvedSkillsDir = (Resolve-Path -LiteralPath $SkillsDir).Path
@@ -55,7 +63,7 @@ $Difference = Compare-Object -ReferenceObject @(Get-PackageHashes $SourceSkill) 
 if ($Difference) {
     throw "Installed package does not match its monorepo source: $Name"
 }
-Write-Host "[install] Wrote and verified $DestinationSkill"
+Write-Host "[install] Wrote and verified $DestinationSkill (version $SkillVersion)"
 
 if ($InstallCodexHook) {
     if ($Name -ne 'drive-project-work') {
