@@ -1,0 +1,402 @@
+{
+  "updated": "2026-09-18",
+  "runs": [
+    {
+      "phase": "Prepared assignment",
+      "status": "Not run",
+      "executive": "No team run has started. The dashboard is a review format populated with the proposed assignment, not a claim of game progress.",
+      "scopeNote": "The complete Cell-to-Space game remains the product objective. This trial has a narrower execution boundary and cannot certify the full game or owner enjoyment.",
+      "team": [
+        {
+          "role": "Project manager",
+          "job": "Own outcome, sequence, shared contracts and report."
+        },
+        {
+          "role": "Deputy PM",
+          "job": "Challenge the execution plan and resource use; record the PM's response."
+        },
+        {
+          "role": "QA / integration",
+          "job": "Own independent checks, builds, hidden runtime and evidence."
+        },
+        {
+          "role": "Developer",
+          "job": "Repair an observed defect within explicit file ownership; add only when needed."
+        }
+      ],
+      "teamNote": "Role selection is adaptive. The proposed roster is not a claim that agents are currently assigned.",
+      "decisions": [
+        {
+          "title": "Deputy kickoff review",
+          "status": "Pending",
+          "detail": "Review the actual candidate, plan and resource boundary when the trial starts.",
+          "response": "No PM response recorded because the run has not started."
+        }
+      ],
+      "standups": [
+        "Prepared by this planning task. No pilot standup has occurred."
+      ],
+      "review": [
+        "Product: inspect ordinary behavior, current build and saved result against each acceptance row.",
+        "Efficiency: compare elapsed time and available usage with actual outcomes, including failed and repeated work.",
+        "Team: inspect deputy judgment, PM response, ownership and any PM role drift.",
+        "Continuity: can a fresh reviewer reconstruct the next decision from handoff and current items?",
+        "Conclusion: adopt, revise, reject or inconclusive. A dashboard and green tests alone cannot pass the trial."
+      ],
+      "evidence": [],
+      "sources": [
+        "Inspected September 18, 2026: candidate Planning/IMPLEMENTATION_STATUS.md. It includes current and historical statements; runtime/process claims require launch-time verification.",
+        "Candidate CellEditorRuntime.cs:116 contains Enter/KeypadEnter calling ConfirmEdit. Source existence is not a verified running build.",
+        "The existing candidate and saves are dirty/untracked state beyond the older Git checkpoint. Preserve them."
+      ],
+      "id": "TRIAL 01",
+      "label": "01 / Cell editor",
+      "title": "An earned edit. A reliable return.",
+      "outcome": "Confirm one real Cell development, then save and reload it through ordinary controls with the inherited investment intact.",
+      "why": "A source-level confirmation fix exists, but the last rebuild stalled and ordinary saved behavior is unproven. This is a small, observable workflow that can reveal whether the team stays focused.",
+      "ceiling": 60,
+      "scheduleLabel": "proposed 60-minute boundary",
+      "metrics": [
+        {
+          "label": "Product result",
+          "value": "Not run",
+          "note": "No acceptance rows verified yet."
+        },
+        {
+          "label": "Elapsed time",
+          "value": "Unknown",
+          "note": "60-minute limit if launch prompt is used."
+        },
+        {
+          "label": "Usage",
+          "value": "Unknown",
+          "note": "Capture actual scope and source at kickoff."
+        },
+        {
+          "label": "Team capacity",
+          "value": "Up to 4",
+          "note": "Developer only if a defect warrants one."
+        }
+      ],
+      "deliverables": [
+        "Current runnable candidate and short launch instructions.",
+        "Ordinary Confirm, Cancel and saved reload evidence.",
+        "HTML executive report, board and relative schedule.",
+        "Deputy verdict, defects and compact next-manager handoff."
+      ],
+      "tasks": [
+        {
+          "status": "Ready",
+          "depends": [],
+          "result": "Planned assignment; no run evidence yet.",
+          "id": "P1",
+          "short": "Adopt & challenge",
+          "title": "Verify lineage/build; deputy reviews the plan",
+          "owner": "PM + Deputy",
+          "start": 0,
+          "end": 12
+        },
+        {
+          "status": "Ready",
+          "depends": [
+            "P1"
+          ],
+          "result": "Planned assignment; no run evidence yet.",
+          "id": "P2",
+          "short": "Build & reproduce",
+          "title": "Exercise current editor and diagnose a real gap",
+          "owner": "QA",
+          "start": 12,
+          "end": 27
+        },
+        {
+          "status": "Ready",
+          "depends": [
+            "P2"
+          ],
+          "result": "Planned assignment; no run evidence yet.",
+          "id": "P3",
+          "short": "Repair if needed",
+          "title": "Bounded repair and integration if behavior fails",
+          "owner": "Developer + QA",
+          "start": 20,
+          "end": 40
+        },
+        {
+          "status": "Ready",
+          "depends": [
+            "P2"
+          ],
+          "result": "Planned assignment; no run evidence yet.",
+          "id": "P4",
+          "short": "Save & reload",
+          "title": "Observe confirmation, Cancel and persisted lineage",
+          "owner": "QA",
+          "start": 35,
+          "end": 45
+        },
+        {
+          "status": "Ready",
+          "depends": [
+            "P4"
+          ],
+          "result": "Planned assignment; no run evidence yet.",
+          "id": "P5",
+          "short": "Review & handoff",
+          "title": "Independent verdict, report and successor check",
+          "owner": "Deputy + PM",
+          "start": 45,
+          "end": 60
+        }
+      ],
+      "acceptance": [
+        {
+          "requirement": "The executed build includes the intended confirmation behavior.",
+          "status": "Unverified",
+          "note": "Must be observed on the named candidate during the run."
+        },
+        {
+          "requirement": "An actual earned Archaea division commits one valid edit through Enter/KeypadEnter.",
+          "status": "Unverified",
+          "note": "Must be observed on the named candidate during the run."
+        },
+        {
+          "requirement": "Cancel restores the draft without spending or corrupting inherited investment.",
+          "status": "Unverified",
+          "note": "Must be observed on the named candidate during the run."
+        },
+        {
+          "requirement": "Confirmation does not leak into unintended world input.",
+          "status": "Unverified",
+          "note": "Must be observed on the named candidate during the run."
+        },
+        {
+          "requirement": "Ordinary Save and Load preserve the committed adaptation, lineage and investment.",
+          "status": "Unverified",
+          "note": "Must be observed on the named candidate during the run."
+        }
+      ],
+      "risks": [
+        "Unity licensing may block a fresh build. Diagnose boundedly; do not launch an infrastructure project.",
+        "An earned editor may take time to reach. Preserve the real lineage and report incomplete if needed.",
+        "This narrow task may favor a simple team. Do not add implementation lanes to justify the process."
+      ],
+      "launchNote": "Paste into a fresh Life Explosion task. The included 60-minute procedural limit becomes your instruction when you submit it.",
+      "prompt": "Use the Project Team 0.1.0 skill at C:/Users/ckvam/Documents/Development/02 Projects/Agent Skills/skills/project-team/SKILL.md. Work on Life Explosion. You are my project manager, with an independent, capable Deputy PM who challenges priorities, resource use and delivery quality constructively. Use subagents where they have a concrete role and available capacity; no nested teams.\n\nRead the full brief at C:/Users/ckvam/Documents/Development/02 Projects/Agent Skills/pilots/life-explosion-team-trials.md and follow the named trial below. The saved project is C:/Users/ckvam/Documents/Development/02 Projects/Games/Life-Explosion; the last integrated dirty candidate is C:/Users/ckvam/.codex/worktrees/08f5/Life-Explosion. Verify current ownership, source, saves and build identity before using them. Do not replace the candidate with the older Git checkpoint. Read applicable AGENTS instructions, the approved September 16 plan and its retained approval reading order at adoption.\n\nThe full selected Cell-to-Space objective stays intact, but this request authorizes only this bounded trial. Do not continue into unrelated game work or an indefinite goal loop. No commits, pushes, publication, purchases or reset-credit redemption. Preserve unrelated work and processes. One independent operator owns all Unity/build/runtime/input work, one hidden muted game at a time; never use my shared desktop. New tests must protect the changed player-visible behavior or an observed regression.\n\nAfter initial authority recovery, keep a compact current-state briefing with the complete scope by reference, active items, ownership and unresolved decisions. On compaction, reconcile it with actual state and later instructions; retrieve full original passages when missing or contradictory. Do not repeatedly paste historical build logs into the PM context. This is the pilot-specific recovery workflow.\n\nStart the elapsed-time clock before recovery. The time boundary below includes setup, meetings, builds, reporting and handoff. It is an agent-observed stop instruction, not a guaranteed hard spending cap. Use any already-available host limit honestly, do not install a watchdog or claim enforcement that does not exist. Record start/end usage if exposed, with account-wide or model-bucket scope and unavailable attribution stated. Never add cached totals or reasoning subcounts twice, and do not convert usage into invented money.\n\nUse the existing project records. Each member updates its own assigned items and contributes brief standups at meaningful boundaries. Keep raw operations with workers; PM receives outcome, changed paths, checks, evidence and uncertainty. The deputy reviews kickoff, underperformance and final disposition; a supported plan is an acceptable verdict. All staffing and reviews must fit host capacity; an idle agent may still occupy a slot.\n\nProduce the owner-facing artifacts described in the brief and C:/Users/ckvam/Documents/Development/02 Projects/Agent Skills/skills/project-team/references/reporting.md. Reuse the supplied HTML template and renderer; do not build a dashboard app. At kickoff and meaningful milestone/final states, update report-data.json and render report.html. Link actual screenshots/clips, current build launch instructions, saved-state evidence and defects. Treat the HTML as a view of work records, never a second authority or fake live tracker. Capture only observed values, and label mechanical/prepared evidence separately from ordinary controls.\n\nReserve closing time for independent review, a concise handoff and the report. Attempt a fresh-context successor reconstruction only if a slot and time are available. If unavailable, state \"not assessed\"; never extend the trial or create another user-owned task just to do it. Finish with links to report.html, report-data.json, review.md, handoff.md and the playable artifact, or the exact unfulfilled acceptance if blocked. Stop at the trial boundary even if the product is incomplete.\n\nTRIAL 1: One earned Cell edit that survives reload.\nMaximum elapsed time: 60 minutes. Begin closing by minute 45. Deputy reviews at the first material result/blocker or minute 20, whichever comes first. This prompt authorizes execution within that boundary without another routine kickoff confirmation.\n\nGoal: verify the existing Enter/KeypadEnter editor-confirm path in a current build, then complete one ordinary earned Archaea division edit, Save and ordinary Load. Check Cancel rollback, inherited investment and input handling as described in the brief. Resume the actual existing lineage, never manufacture progression or replace browser saves. Do not grind through seven coordination divisions or expand into shoreline delivery.\n\nUse PM + deputy + independent QA/operator initially. Add a developer only for an observed defect that can be repaired within the trial. If the editor and flow already pass, demonstrate them and conclude early. If licensing or access blocks execution, make at most two materially different evidence-led attempts, preserve the work and report the blocker. Do not silently substitute a more convenient scenario.\n\nWrite the run bundle under C:/Users/ckvam/Documents/Development/02 Projects/Games/Life-Explosion/TestResults/ProjectTeamPilot/Trial-1-<actual-UTC-start>/, using the actual timestamp. Keep shared candidate edits in their correctly reserved project workspace, not inside the report bundle."
+    },
+    {
+      "phase": "Prepared assignment",
+      "status": "Not run",
+      "executive": "No team run has started. The dashboard is a review format populated with the proposed assignment, not a claim of game progress.",
+      "scopeNote": "The complete Cell-to-Space game remains the product objective. This trial has a narrower execution boundary and cannot certify the full game or owner enjoyment.",
+      "team": [
+        {
+          "role": "Project manager",
+          "job": "Own outcome, sequence, shared contracts and report."
+        },
+        {
+          "role": "Deputy PM",
+          "job": "Challenge the execution plan and resource use; record the PM's response."
+        },
+        {
+          "role": "QA / integration",
+          "job": "Own independent checks, builds, hidden runtime and evidence."
+        },
+        {
+          "role": "Developer",
+          "job": "Repair an observed defect within explicit file ownership; add only when needed."
+        }
+      ],
+      "teamNote": "Role selection is adaptive. The proposed roster is not a claim that agents are currently assigned.",
+      "decisions": [
+        {
+          "title": "Deputy kickoff review",
+          "status": "Pending",
+          "detail": "Review the actual candidate, plan and resource boundary when the trial starts.",
+          "response": "No PM response recorded because the run has not started."
+        }
+      ],
+      "standups": [
+        "Prepared by this planning task. No pilot standup has occurred."
+      ],
+      "review": [
+        "Product: inspect ordinary behavior, current build and saved result against each acceptance row.",
+        "Efficiency: compare elapsed time and available usage with actual outcomes, including failed and repeated work.",
+        "Team: inspect deputy judgment, PM response, ownership and any PM role drift.",
+        "Continuity: can a fresh reviewer reconstruct the next decision from handoff and current items?",
+        "Conclusion: adopt, revise, reject or inconclusive. A dashboard and green tests alone cannot pass the trial."
+      ],
+      "evidence": [],
+      "sources": [
+        "Inspected September 18, 2026: candidate Planning/IMPLEMENTATION_STATUS.md. It includes current and historical statements; runtime/process claims require launch-time verification.",
+        "Candidate CellEditorRuntime.cs:116 contains Enter/KeypadEnter calling ConfirmEdit. Source existence is not a verified running build.",
+        "The existing candidate and saves are dirty/untracked state beyond the older Git checkpoint. Preserve them.",
+        "Independently inspected I40 XML: 903 passed, zero failed/skipped. Existing tests cover paid upstairs work, control handover and rescue/reload.",
+        "UpperFloor-02/pre-repair-checkpoint.json: rev1862, SHA256 0FD3708DA1A290CB06326E1C193EF59624977C65EE6D23BFA17F8908E7242289.",
+        "EarnedColony-11/pre-driver-repair-checkpoint.json: rev1767, SHA256 2CA6CBB5625548652ED6D9D0173B5A6ECA632815881DDCF790831CCA34D8B9E5.",
+        "Full selected Tribal authority: Planning/2026-09-07-Tribal-Selected-Design-Plan.md, as superseded by later approvals."
+      ],
+      "id": "TRIAL 02",
+      "label": "02 / Colony challenge",
+      "title": "A home that works. A rescue that holds.",
+      "outcome": "Finish paid upstairs work and use the station; preserve shared work across control and save transitions, then demonstrate rescue and sheltered recovery.",
+      "why": "Navigation, physical construction, jobs, UI, care and save continuity meet in one player-visible outcome. Separate diagnosis can proceed in parallel while one operator verifies the integrated result. The benefit is a hypothesis to test, not a guarantee of superiority.",
+      "ceiling": 180,
+      "scheduleLabel": "proposed 180-minute boundary",
+      "metrics": [
+        {
+          "label": "Product result",
+          "value": "Not run",
+          "note": "Existing test evidence gets credit."
+        },
+        {
+          "label": "Elapsed time",
+          "value": "Unknown",
+          "note": "Three periods, 180 minutes total maximum."
+        },
+        {
+          "label": "Usage",
+          "value": "Unknown",
+          "note": "No dollars or per-agent cost invented."
+        },
+        {
+          "label": "Team capacity",
+          "value": "Up to 4",
+          "note": "Rotate specialists only if capacity permits."
+        }
+      ],
+      "deliverables": [
+        "A playable colony slice with clear controls and preserved branch saves.",
+        "Paid construction, upstairs use and shared-work evidence.",
+        "Physical rescue/treatment and roofed-bed recovery evidence.",
+        "Executive dashboard, deputy decisions and handoff bundle."
+      ],
+      "tasks": [
+        {
+          "status": "Ready",
+          "depends": [],
+          "result": "Planned assignment; no run evidence yet.",
+          "id": "C1",
+          "short": "Adopt & plan",
+          "title": "Verify checkpoints and shared contracts",
+          "owner": "PM + Deputy",
+          "start": 0,
+          "end": 20
+        },
+        {
+          "status": "Ready",
+          "depends": [
+            "C1"
+          ],
+          "result": "Planned assignment; no run evidence yet.",
+          "id": "C2",
+          "short": "Upstairs path",
+          "title": "Resume paid work and diagnose access defects",
+          "owner": "Developer + QA",
+          "start": 20,
+          "end": 75
+        },
+        {
+          "status": "Ready",
+          "depends": [
+            "C1"
+          ],
+          "result": "Planned assignment; no run evidence yet.",
+          "id": "C3",
+          "short": "Care & shelter",
+          "title": "Diagnose rescue and roofed-bed recovery",
+          "owner": "Specialist",
+          "start": 20,
+          "end": 85
+        },
+        {
+          "status": "Ready",
+          "depends": [
+            "C2",
+            "C3"
+          ],
+          "result": "Planned assignment; no run evidence yet.",
+          "id": "C4",
+          "short": "Integrate & exercise",
+          "title": "Verify real control, cargo and save transitions",
+          "owner": "QA",
+          "start": 75,
+          "end": 125
+        },
+        {
+          "status": "Ready",
+          "depends": [
+            "C4"
+          ],
+          "result": "Planned assignment; no run evidence yet.",
+          "id": "C5",
+          "short": "Independent closure",
+          "title": "Inspect integrated behavior and remaining defects",
+          "owner": "QA + Deputy",
+          "start": 125,
+          "end": 150
+        },
+        {
+          "status": "Ready",
+          "depends": [
+            "C5"
+          ],
+          "result": "Planned assignment; no run evidence yet.",
+          "id": "C6",
+          "short": "Owner report",
+          "title": "Prepare playable bundle and successor handoff",
+          "owner": "PM + Deputy",
+          "start": 150,
+          "end": 180
+        }
+      ],
+      "acceptance": [
+        {
+          "requirement": "Resume the earned1862 floor job with paid foundation/stairs and original jobs intact.",
+          "status": "Unverified",
+          "note": "Must be observed on the named candidate during the run."
+        },
+        {
+          "requirement": "Workers physically self-supply with Haul off, reach the completed upstairs station and make one paid axe.",
+          "status": "Unverified",
+          "note": "Must be observed on the named candidate during the run."
+        },
+        {
+          "requirement": "Inhabit, interrupt, Save/Load and Return preserve reserved cargo and paid work; another worker continues.",
+          "status": "Unverified",
+          "note": "Must be observed on the named candidate during the run."
+        },
+        {
+          "requirement": "On the separate rescue branch, a real warning/downing, deadline, pickup/carry and mid-carry reload preserve the same person.",
+          "status": "Unverified",
+          "note": "Must be observed on the named candidate during the run."
+        },
+        {
+          "requirement": "Treatment charges once; a physically constructed roof improves actual recovery at the same bed.",
+          "status": "Unverified",
+          "note": "Must be observed on the named candidate during the run."
+        },
+        {
+          "requirement": "A separate preserved deadline branch demonstrates the selected individual-death consequence exactly once.",
+          "status": "Unverified",
+          "note": "Must be observed on the named candidate during the run."
+        },
+        {
+          "requirement": "Independent evidence distinguishes ordinary controls from prepared mechanical review.",
+          "status": "Unverified",
+          "note": "Must be observed on the named candidate during the run."
+        }
+      ],
+      "risks": [
+        "I40 already passes 903 tests, including the stair regression. Verify and repair actual gaps; do not rewrite working systems.",
+        "Upstairs1862 and rescue1767 are separate earned branches. Never overwrite one with the other.",
+        "Shared job/control/save files are a collision point. One technical owner must integrate changes.",
+        "The full combined outcome may exceed the boundary. Incomplete evidence is a result to review, not permission to extend."
+      ],
+      "launchNote": "Use after we review Trial 1. The included 180-minute procedural limit becomes your instruction when you submit it.",
+      "prompt": "Use the Project Team 0.1.0 skill at C:/Users/ckvam/Documents/Development/02 Projects/Agent Skills/skills/project-team/SKILL.md. Work on Life Explosion. You are my project manager, with an independent, capable Deputy PM who challenges priorities, resource use and delivery quality constructively. Use subagents where they have a concrete role and available capacity; no nested teams.\n\nRead the full brief at C:/Users/ckvam/Documents/Development/02 Projects/Agent Skills/pilots/life-explosion-team-trials.md and follow the named trial below. The saved project is C:/Users/ckvam/Documents/Development/02 Projects/Games/Life-Explosion; the last integrated dirty candidate is C:/Users/ckvam/.codex/worktrees/08f5/Life-Explosion. Verify current ownership, source, saves and build identity before using them. Do not replace the candidate with the older Git checkpoint. Read applicable AGENTS instructions, the approved September 16 plan and its retained approval reading order at adoption.\n\nThe full selected Cell-to-Space objective stays intact, but this request authorizes only this bounded trial. Do not continue into unrelated game work or an indefinite goal loop. No commits, pushes, publication, purchases or reset-credit redemption. Preserve unrelated work and processes. One independent operator owns all Unity/build/runtime/input work, one hidden muted game at a time; never use my shared desktop. New tests must protect the changed player-visible behavior or an observed regression.\n\nAfter initial authority recovery, keep a compact current-state briefing with the complete scope by reference, active items, ownership and unresolved decisions. On compaction, reconcile it with actual state and later instructions; retrieve full original passages when missing or contradictory. Do not repeatedly paste historical build logs into the PM context. This is the pilot-specific recovery workflow.\n\nStart the elapsed-time clock before recovery. The time boundary below includes setup, meetings, builds, reporting and handoff. It is an agent-observed stop instruction, not a guaranteed hard spending cap. Use any already-available host limit honestly, do not install a watchdog or claim enforcement that does not exist. Record start/end usage if exposed, with account-wide or model-bucket scope and unavailable attribution stated. Never add cached totals or reasoning subcounts twice, and do not convert usage into invented money.\n\nUse the existing project records. Each member updates its own assigned items and contributes brief standups at meaningful boundaries. Keep raw operations with workers; PM receives outcome, changed paths, checks, evidence and uncertainty. The deputy reviews kickoff, underperformance and final disposition; a supported plan is an acceptable verdict. All staffing and reviews must fit host capacity; an idle agent may still occupy a slot.\n\nProduce the owner-facing artifacts described in the brief and C:/Users/ckvam/Documents/Development/02 Projects/Agent Skills/skills/project-team/references/reporting.md. Reuse the supplied HTML template and renderer; do not build a dashboard app. At kickoff and meaningful milestone/final states, update report-data.json and render report.html. Link actual screenshots/clips, current build launch instructions, saved-state evidence and defects. Treat the HTML as a view of work records, never a second authority or fake live tracker. Capture only observed values, and label mechanical/prepared evidence separately from ordinary controls.\n\nReserve closing time for independent review, a concise handoff and the report. Attempt a fresh-context successor reconstruction only if a slot and time are available. If unavailable, state \"not assessed\"; never extend the trial or create another user-owned task just to do it. Finish with links to report.html, report-data.json, review.md, handoff.md and the playable artifact, or the exact unfulfilled acceptance if blocked. Stop at the trial boundary even if the product is incomplete.\n\nTRIAL 2: A usable two-level colony home and rescue/recovery loop.\nMaximum elapsed time: 180 minutes. Work in at most three 60-minute periods, with deputy review at each boundary and each repeated blocker. Begin final closing by minute 150. This prompt authorizes execution within that boundary without another routine kickoff confirmation.\n\nGoal: complete the preserved paid upstairs construction, physically use an upstairs workstation, preserve direct/AI work handover and save continuity, and demonstrate physical rescue/treatment plus roofed-bed recovery on the separate preserved rescue branch. Existing mechanics and regression tests receive credit; repair observed gaps rather than rewriting working systems.\n\nUse the exact source/checkpoint references and acceptance in the trial brief. The upstairs branch starts at revision1862. Rescue starts from its separate revision1767 branch. Never replace one with the other. Main ordinary gameplay must not be replaced by prepared drivers; credit drivers only for the behavior they actually demonstrate. Do not induce an actual casualty in the owner's primary save.\n\nKeep shared job/save/control contracts under one named technical owner. Separate navigation/construction diagnosis from rescue/care diagnosis where files permit. PM + deputy + developer + independent QA is a workable four-slot team. A second specialist may rotate in only if the host actually releases capacity and independent review remains available. Keep builds and gameplay serialized.\n\nAttempt this after reviewing Trial 1's result with me. If no Trial 1 bundle or review decision exists, report that prerequisite before dispatching the larger run. During the run, do not require my approval at every successful internal period; continue within the approved 180-minute boundary. On time expiry, preserve a playable partial result and report exact unmet criteria, not a smaller definition of success.\n\nWrite the run bundle under C:/Users/ckvam/Documents/Development/02 Projects/Games/Life-Explosion/TestResults/ProjectTeamPilot/Trial-2-<actual-UTC-start>/, using the actual timestamp."
+    }
+  ],
+  "footer": "Prepared from local source and existing artifacts on September 18, 2026. All trial results remain unverified. Project Team 0.1.0 is experimental.",
+  "project": "Life Explosion"
+}

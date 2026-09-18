@@ -1,0 +1,6 @@
+interface:
+  display_name: "Chief Delegator"
+  short_description: "Lead delegated product work through full acceptance"
+  default_prompt: "Use $chief-delegator to lead this approved product outcome with bounded workers, independent review, and continuity of acceptance and decisions."
+policy:
+  allow_implicit_invocation: true

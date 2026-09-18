@@ -1,0 +1,6 @@
+interface:
+  display_name: "Parallel Engineering Orchestration"
+  short_description: "Coordinate independent engineering lanes and issues"
+  default_prompt: "Use $parallel-issue-orchestration to identify independent lanes early and coordinate authorized parallel agents with disjoint ownership and compact evidence returns."
+policy:
+  allow_implicit_invocation: true

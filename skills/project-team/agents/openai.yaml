@@ -1,0 +1,6 @@
+interface:
+  display_name: "Project Team"
+  short_description: "Coordinate a delivery team with independent challenge"
+  default_prompt: "Use $project-team to organize this approved project with a PM, independent deputy, appropriate specialists, shared work records, and bounded delivery reviews."
+policy:
+  allow_implicit_invocation: true

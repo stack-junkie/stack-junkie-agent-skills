@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- **Manage Codex Work:** Added connected Notion capture, evidence-backed activity fields, recoverable decision forwarding, and incremental scheduled maintenance while retaining native-only task access.
+
+### Added
+
+- **Project Team draft 0.1.0:** Added role contracts, independent deputy review, shared Kanban/timeline/standup records and bounded delivery guidance. The Life Explosion pilot brief is prepared for later owner review and fresh-session launch.
+
+- **Parallel Issue Orchestration (`parallel-issue-orchestration`) 1.0.0:** Added live-state reconciliation, conflict mapping, isolated agent lanes, shared-host permission boundaries, orchestrator review, and focused publication for concurrent GitHub issue work.
+
 ## [2.0.0] - 2026-08-19
 
 ### Changed

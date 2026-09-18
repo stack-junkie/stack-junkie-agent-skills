@@ -238,6 +238,9 @@ def status() -> int:
         return 1
     paths = state["paths"]
     print(f"Codex home: {paths['home']}")
+    print(f"Reference package: {state['source']}")
+    if state["source"].resolve() == paths["skill"].resolve():
+        print("[note] Installed-package self-check; synchronization with a source repository was not checked")
     print(f"Skill package: {'current' if state['skill_current'] else 'missing or drifted'}")
     print(f"Hook runtime: {'current' if state['runtime_current'] else 'missing or drifted'}")
     print(f"Hook configuration: {'current' if state['hooks_current'] else 'missing or drifted'}")
@@ -261,6 +264,7 @@ def install(apply: bool) -> int:
         if not current
     ]
     print(f"Codex home: {paths['home']}")
+    print(f"Reference package: {state['source']}")
     if not changes:
         print("[ok] installation is current")
         return 0

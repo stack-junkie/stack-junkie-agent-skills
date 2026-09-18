@@ -1,4 +1,4 @@
 interface:
   display_name: "Thread Steward"
-  short_description: "Review and coordinate work across Codex chats"
-  default_prompt: "Use $manage-codex-work to review my recent and active Codex conversations and show what needs my attention."
+  short_description: "Coordinate Codex tasks and connected Notion work"
+  default_prompt: "Use $manage-codex-work to review current tasks, capture meaningful changes in my configured Notion workspace, and show what needs my attention."
