@@ -1,10 +1,18 @@
 # Stack Junkie Agent Skills
 
-Three portable skills for coding agents. Install only the skill you want, then invoke it by name or ask for the behavior it provides.
+Portable skills for coding agents. Install only the skill you want, then invoke it by name or ask for the behavior it provides.
 
 Each directory under [`skills/`](skills/) is a self-contained package with a `SKILL.md`, passive version metadata, and only the scripts, references, and assets needed for its actual behavior.
 
-## Available skills
+## Matt Pocock skills trial
+
+This checkout includes editable copies of the 20 engineering and 7 productivity packages from [Matt Pocock’s skills, version 1.3.2](https://github.com/mattpocock/skills/tree/abeeaf95660ba9e8b7c753eb38f441ca707a8823/skills). The [upstream manifest](https://github.com/mattpocock/skills/blob/abeeaf95660ba9e8b7c753eb38f441ca707a8823/.claude-plugin/plugin.json) lists the original package paths. Each imported package lives directly under `skills/<name>/` and carries Matt’s MIT license and a local `VERSION` file for the installer.
+
+Start a project plan with [grill-with-docs](skills/grill-with-docs/SKILL.md). Use [wayfinder](skills/wayfinder/SKILL.md) for decisions across sessions, [to-spec](skills/to-spec/SKILL.md) to collect the agreed decisions, and [to-tickets](skills/to-tickets/SKILL.md) to split the spec into buildable issues. [Ask Matt](skills/ask-matt/SKILL.md) helps choose among the other skills.
+
+Make adaptations here and use the Windows installer below to sync an edited package. When adopting an upstream update, compare the original package at the linked revision with its newer version and retain any local changes.
+
+## Local skills
 
 | Skill | What it does | Example request |
 |---|---|---|
