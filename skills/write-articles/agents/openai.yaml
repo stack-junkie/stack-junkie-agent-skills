@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Articles"
+  short_description: "Research and write articles in Chris's voice"
+  default_prompt: "Use $write-articles to develop this article, confirm its brief, and prepare a thoroughly reviewed private candidate."

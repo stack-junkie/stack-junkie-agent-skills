@@ -12,8 +12,9 @@ Each actionable item contains:
 - stable ID, player/user-visible outcome and authoritative requirement reference;
 - owner role and actual agent identity, dependencies and current status;
 - exact source/workspace baseline, exclusive write scope and shared-resource reservation;
-- acceptance result required and proportionate verification;
+- acceptance result required, observable comparison and timing, proportionate verification, and any missing observation or authority;
 - estimate range, agreed resource/review boundary and assumptions where relevant;
+- verified operator tool access and known limitations when execution depends on specialized tools;
 - current blocker or next action;
 - implementation, review and evidence links, with actual author/reviewer identities.
 
@@ -39,7 +40,7 @@ Keep current:
 1. Complete delivery objective and authority references.
 2. Candidate/workspace identity and known verified behavior.
 3. Remaining requirement groups and critical dependencies.
-4. Active people, work items and exclusive resource owners.
+4. Active people, work items, exclusive resource owners and known tool-access limitations, with the relevant environment and recheck trigger.
 5. Current decisions, material objections, blockers and next assignments.
 6. Resource boundary, observed consumption, enforcement limitations and last review.
 

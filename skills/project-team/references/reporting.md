@@ -12,7 +12,7 @@ Render from the single report-data.json snapshot:
 
     python scripts/render_report.py --data <run-folder>/report-data.json --output <run-folder>/report.html
 
-The renderer uses only Python's standard library. The report works offline without a server, CDN, installation or subscription. Use relative evidence paths within the bundle for portability. The buttons switch runs, filter Kanban, copy the launch prompt, export the same data and print the visible run. This is a timestamped snapshot, not a live controller or editable project database.
+The renderer uses only Python's standard library. The report works offline without a server, CDN, installation or subscription. Use relative evidence paths within the bundle for portability. The buttons switch runs, filter Kanban, copy the launch prompt, export the same data and print the visible run. This is a timestamped snapshot, not a live controller or editable project database. For a verification entry with no assigned work schedule, set `showSchedule: false` to omit the timeline instead of inventing a duration or ceiling; prepared assignments show their existing schedule by default.
 
 If a board already exists, derive this JSON from its current items and cite the canonical record IDs; do not maintain two independent work lists. If no board exists, use this one JSON as the pilot work-item source and avoid a parallel Markdown board.
 
@@ -30,9 +30,17 @@ If a board already exists, derive this JSON from its current items and cite the 
 
 Report dates and source/build freshness. Keep prepared fixtures, ordinary user interaction, automated tests and owner acceptance separate. Use words such as Unverified and Unknown when evidence is missing; never substitute zero or fabricated progress.
 
+## Motion evidence when the assignment requires it
+
+Use the existing evidence entries with `kind: "video"`, `href`, `title` and `caption`; no new report application or parallel registry is needed. Embed full retained segments. Add highlight links as ordinary evidence entries or acceptance `href` values with media fragments such as `evidence/video/segment-0001.webm#t=12,28`. Verify those links in the generated report. Screenshots and exact state observations remain supporting evidence.
+
+Keep candidate identity, actual operator, segment order, recording timestamps and known gaps in the existing evidence captions and acceptance notes, linking retained recorder metadata when available. Explain overlap and any omitted setup or paused interval. Do not imply edited highlights are a complete recording. Independent review watches every claimed acceptance sequence and checks every retained segment for usable motion, then shares the reviewed videos with absolute artifact paths in chat.
+
+Before consequential interaction, verify recording from the intended operator, local persistence and playback. Record a failure or missing interval honestly and follow the assignment's pause/recovery rule. A green recording indicator, file size or still frame cannot establish successful motion capture. Nonvisual assignments do not need video.
+
 ## Cadence and scope
 
-Render at kickoff, significant outcome or blocker changes, and final closure. Reuse the template without redesigning it during the pilot. Reserve reporting time within the existing resource ceiling, including media inspection and handoff. If the ceiling arrives, deliver an honest partial report.
+During a cheap access preflight, a short work-item status and diagnostic log suffice. Render at the first material result, significant outcome or blocker changes, and final closure. Reuse the template without redesigning it during the pilot. Reserve reporting time within the existing resource ceiling, including media inspection and handoff. If the ceiling arrives, deliver an honest partial report.
 
 Keep raw logs with the worker evidence. A short failed attempt with its diagnosis matters more than a long manifest in the executive summary. Do not copy secrets, personal account data, raw private transcripts or unrelated work into a shareable report.
 

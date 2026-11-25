@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Council"
+  short_description: "Improve workflows with less owner effort and rework"
+  default_prompt: "Use $codex-council to improve how we work together. Have each reviewer judge readiness and fit with my actual instructions and preferences, then revise the proposal within scope before bringing it back to me."

@@ -8,9 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- **Stack Junkie Style 3.0.0-preview.1:** Replace the independent HTML specimen with web and Qt component showcases driven by shared tokens, catalog and version. Add three provisional visual directions and conditional skill references; owner selection and platform interaction review remain pending.
+
+- **Project Team draft 0.1.2:** Verify tool access from the intended operator, retain known capability limitations, and require persisted, independently reviewed video when motion matters. Life Explosion assignments now require silent recording of all active gameplay and timestamped highlights; a separate 30-minute recorded Trial 1 follow-up credits the completed numerical checks. No trial or schedule is launched by these changes.
+
+- **Project Team draft 0.1.1:** Added observable acceptance planning, independent deputy challenge of verification methods and incomplete stops, and bounded resolution of verification gaps. Updated Life Explosion prompts to permit minimal reversible verification work and credit completed runtime evidence.
+
 - **Manage Codex Work:** Added connected Notion capture, evidence-backed activity fields, recoverable decision forwarding, and incremental scheduled maintenance while retaining native-only task access.
 
 ### Added
+
+- **Write Articles draft:** Add a portable article workflow, eight format examples, voice and original-source guidance, independent review, and content/link/state helpers. Private paired trials and owner acceptance determine adoption; no installation or publishing automation is included yet.
 
 - **Project Team draft 0.1.0:** Added role contracts, independent deputy review, shared Kanban/timeline/standup records and bounded delivery guidance. The Life Explosion pilot brief is prepared for later owner review and fresh-session launch.
 

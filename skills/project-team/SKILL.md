@@ -2,12 +2,12 @@
 name: project-team
 description: Organize sustained project delivery with an adaptive AI team, a project manager, an independent deputy, shared work records, and bounded execution reviews. Use when the owner wants a managed team or a pilot of this workflow.
 metadata:
-  version: "0.1.0"
+  version: "0.1.2"
 ---
 
 # Project Team
 
-Version 0.1.0 is a draft operating model, not a proven autonomous delivery system. The owner-facing agent is the project manager (PM). The team carries continuity through shared current state and authoritative requirements rather than relying on one long conversation.
+Version 0.1.2 is a draft operating model, not a proven autonomous delivery system. The owner-facing agent is the project manager (PM). The team carries continuity through shared current state and authoritative requirements rather than relying on one long conversation.
 
 ## Start with the actual assignment
 
@@ -29,6 +29,8 @@ The PM owns priorities, shared contracts, staffing, acceptance decisions and com
 
 Give members only the context needed for their assignment. Prefer self-contained briefs and minimal history over full-transcript forks when the tools allow it. Each brief names the role, outcome, authoritative requirements, current baseline, exclusive paths, dependencies, acceptance, return format and escalation boundary. Use existing isolated workspaces where appropriate and preserve unfinished work.
 
+Before assigning tool-dependent execution, have the intended operator verify the required access from its own task with a small supported check. PM access does not establish subagent access. Carry known limitations in the existing handoff and recheck after a relevant environment change, rather than repeatedly attempting an unsupported route. If only the PM has access, explicitly assign it the sole operator role for that work and retain independent implementation and acceptance review.
+
 The PM may inspect consequential diffs or conflicting evidence. It should not routinely become the debugger or gameplay operator. If temporary execution is necessary, state the reason, boundary and exit condition. Keep an independent reviewer for that work.
 
 ## Agree on a bounded work period
@@ -43,6 +45,18 @@ Before execution, record:
 For an experimental pilot, settle the resource boundary with the owner before dispatch. Never invent spending authorization or label a procedural instruction a hard cap. Use existing host limits if available. If only agent-observed elapsed time or usage is available, disclose that it cannot guarantee a ceiling; use a supervised pilot when the owner requires a hard ceiling that tools cannot enforce.
 
 At a normal batch review, continue already-authorized work when the evidence supports it. At a pilot ceiling or explicit owner stop, preserve work and stop. Do not add a routine approval gate to every batch. Do not redeem usage-reset credits automatically.
+
+## Make acceptance demonstrable
+
+Before a consequential operation, QA identifies the observation, timing and pass/fail comparison for each material acceptance requirement in the existing work item. Check that the proposed tools expose the necessary state. Account for later actions that could erase or mask the evidence, such as replenishment, retries or state transitions. Inspect the relevant lifecycle before assuming an action can be repeated. Keep this brief; no separate matrix or reporting system is required.
+
+When acceptance depends on motion or an interaction sequence, require video and first verify recording, local persistence and actual playback from the intended operator. A recording indicator or nonempty file is insufficient. Retain the coverage required by the assignment, label gaps, and link claims to timestamped sequences. Screenshots and numerical observations support rather than replace motion evidence. The independent reviewer watches the claimed sequences; the deputy challenges missing footage and misleading cuts. This requirement is conditional on the task, not a video requirement for nonvisual work.
+
+The deputy independently checks the requirements against that method, including a plausible failure that could produce the same apparent success. Challenge gaps between the requested result, observable evidence and available authority before endorsing execution. Repeating the PM's acceptance list is not an independent check. A supported verdict identifies why the critical comparison works or which uncertainty a bounded experiment will resolve.
+
+When a required result cannot be verified, treat the missing observation as a delivery dependency even if no product defect has been demonstrated. QA proposes the smallest supported remedy, its cost and any behavior it could disturb; the PM assigns it when already authorized and feasible within the remaining boundary. Existing checks, read-only observations or a minimal reversible diagnostic may suffice. This skill grants no additional permissions: explicit owner restrictions, access controls and resource limits still apply. If authority is missing, describe the concrete proposed change and decision needed while continuing independent authorized work.
+
+At a proposed incomplete stop, the deputy challenges whether a feasible authorized remedy remains. The PM records the specific remaining barrier or exhausted boundary. Honest partial reporting preserves uncertainty; it does not discharge an unmet requirement. Do not extend a pilot, bypass access restrictions, or create instrumentation merely to avoid stopping. Temporary diagnostics need a named acceptance purpose and a removal or review condition.
 
 ## Run the project through shared work
 
@@ -62,7 +76,7 @@ A member's return contains outcome, changed paths, check results, evidence links
 
 ## Give the deputy a real challenge function
 
-The deputy reviews the initial execution plan, underperforming batches, material changes in approach and manager handoffs. It independently checks progress against the requested outcome, repeated work, verification cost, resource consumption, neglected dependencies and PM role drift.
+The deputy reviews the initial execution plan, underperforming batches, material changes in approach, proposed incomplete stops and manager handoffs. Its acceptance-method challenge follows Make acceptance demonstrable above. It independently checks progress against the requested outcome, repeated work, verification cost, resource consumption, neglected dependencies and PM role drift.
 
 Its return is a concise verdict: supported, revise, or owner decision needed; evidence; and a specific alternative when revising. The PM records its disposition and reason. One exchange should normally resolve a routine challenge. Use a bounded experiment or owner decision for a material unresolved disagreement, rather than debating indefinitely.
 
