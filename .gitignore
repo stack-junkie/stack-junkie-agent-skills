@@ -24,3 +24,17 @@ Desktop.ini
 .playwright-cli/
 *.tmp
 *.log
+
+# Private design discussions and research collected for owner review.
+/skills/stack-junkie-style/docs/design-skill-revamp-history/
+
+# Stack Junkie generated previews and local build tools.
+/skills/stack-junkie-style/ui/web/node_modules/
+/skills/stack-junkie-style/ui/web/dist/
+/skills/stack-junkie-style/ui/web/dist-library/
+/skills/stack-junkie-style/ui/web/dist-types/
+/skills/stack-junkie-style/ui/web/*.tsbuildinfo
+/skills/stack-junkie-style/ui/generated/
+/skills/stack-junkie-style/ui/native/build*/
+/skills/stack-junkie-style/ui/.tools/
+/skills/stack-junkie-style/ui/dist/
