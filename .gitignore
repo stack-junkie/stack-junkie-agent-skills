@@ -34,7 +34,13 @@ Desktop.ini
 /skills/stack-junkie-style/ui/web/dist-library/
 /skills/stack-junkie-style/ui/web/dist-types/
 /skills/stack-junkie-style/ui/web/*.tsbuildinfo
+/skills/stack-junkie-style/ui/web-next/node_modules
+/skills/stack-junkie-style/ui/web-next/dist/
+/skills/stack-junkie-style/ui/web-next/*.tsbuildinfo
 /skills/stack-junkie-style/ui/generated/
 /skills/stack-junkie-style/ui/native/build*/
+/skills/stack-junkie-style/ui/native-next/build*/
 /skills/stack-junkie-style/ui/.tools/
 /skills/stack-junkie-style/ui/dist/
+# Private chat history and research: kept local until Chris decides
+/skills/stack-junkie-style/docs/design-skill-revamp-history/
