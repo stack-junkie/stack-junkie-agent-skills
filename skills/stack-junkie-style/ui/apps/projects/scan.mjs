@@ -374,7 +374,7 @@ async function main() {
   const config = JSON.parse(await readFile(configPath, 'utf8'));
   const args = process.argv.slice(2);
   const roots = args.filter(a => !a.startsWith('--'));
-  const result = await scan({ ...config, roots: roots.length ? roots : config.roots, remote: !args.includes('--local') });
+  const result = await scan({ ...config, roots: (roots.length ? roots : config.roots).map(r => path.resolve(here, r)), remote: !args.includes('--local') });
   await mkdir(path.join(here, 'data'), { recursive: true });
   await writeFile(path.join(here, 'data', 'projects.json'), `${JSON.stringify(result, null, 2)}\n`);
   const counted = result.projects.filter(p => !p.source);

@@ -1,5 +1,5 @@
 {
-  "roots": ["C:\\Users\\ckvam\\Documents\\Development\\02 Projects"],
+  "roots": ["../../../../../.."],
   "skip": ["_backups", "threads-archive", "InactiveOrArchive", "Large archived", "3rd Party"],
   "skipPaths": [],
   "exempt": ["sj-paint"],
