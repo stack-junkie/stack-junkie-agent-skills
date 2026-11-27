@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- **Stack Junkie Style moved to its own repo:** [stack-junkie/stack-junkie-style](https://github.com/stack-junkie/stack-junkie-style), with its history. This collection no longer contains it.
 - **Stack Junkie Style 3.0.0-preview.1:** Replace the independent HTML specimen with web and Qt component showcases driven by shared tokens, catalog and version. Add three provisional visual directions and conditional skill references; owner selection and platform interaction review remain pending.
 
 - **Project Team draft 0.1.2:** Verify tool access from the intended operator, retain known capability limitations, and require persisted, independently reviewed video when motion matters. Life Explosion assignments now require silent recording of all active gameplay and timestamped highlights; a separate 30-minute recorded Trial 1 follow-up credits the completed numerical checks. No trial or schedule is launched by these changes.

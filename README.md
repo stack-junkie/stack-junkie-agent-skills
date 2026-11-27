@@ -23,7 +23,7 @@ Make adaptations here and use the Windows installer below to sync an edited pack
 | [`chief-delegator`](skills/chief-delegator/SKILL.md) | Keeps one lead responsible for the approved outcome, integration, and acceptance while workers handle bounded implementation and review. | `Use $chief-delegator to lead delivery of this approved project.` |
 | [`manage-codex-work`](skills/manage-codex-work/) | Coordinates Codex tasks using native tools and maintains a configured Notion workspace at milestones and scheduled reviews. | `Use $manage-codex-work to show what needs my attention across tasks.` |
 | [`parallel-issue-orchestration`](skills/parallel-issue-orchestration/) | Coordinates independent engineering investigations, implementation, reviews, and GitHub issues across agent lanes. | `Use $parallel-issue-orchestration to identify independent lanes early and coordinate them.` |
-| [`stack-junkie-style`](skills/stack-junkie-style/) | Applies the Stack Junkie interface system across web, desktop, mobile, and application UIs. | `Use $stack-junkie-style to redesign this app.` |
+| [`stack-junkie-style`](https://github.com/stack-junkie/stack-junkie-style) (own repo) | Chris's design system for every front end: presets, web and Qt libraries, showcases. Install it from its own repo: `npx skills add stack-junkie/stack-junkie-style -g`. | `Use $stack-junkie-style to build this app's interface.` |
 | [`preserve-compaction-continuity`](skills/preserve-compaction-continuity/) | Preserves exact owner context and restores the active task after Codex compaction. | `Use $preserve-compaction-continuity to install transcript-backed compaction recovery.` |
 
 Project Team is an experimental operating model. Its draft version and pilot artifacts do not establish proven autonomous delivery.
@@ -43,21 +43,21 @@ The open [`skills` CLI](https://github.com/vercel-labs/skills) can list or insta
 
 ```shell
 npx skills add stack-junkie/stack-junkie-agent-skills --list
-npx skills add stack-junkie/stack-junkie-agent-skills --skill stack-junkie-style -g
+npx skills add stack-junkie/stack-junkie-agent-skills --skill grill-with-docs -g
 ```
 
-Replace `stack-junkie-style` with another name from the catalog. To target a particular client, add `--agent codex` or `--agent claude-code`.
+Replace `grill-with-docs` with another name from the catalog. To target a particular client, add `--agent codex` or `--agent claude-code`.
 
 The GitHub commands install the published repository state. To use this checkout, including local changes, run from the repository root:
 
 ```shell
-npx skills add . --skill stack-junkie-style -g --agent codex
+npx skills add . --skill grill-with-docs -g --agent codex
 ```
 
 On Windows, the repository installer copies one local package and confirms the installed copy matches its source:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_skill.ps1 -Name stack-junkie-style
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_skill.ps1 -Name grill-with-docs
 ```
 
 It defaults to `%USERPROFILE%\.codex\skills`, or `CODEX_SKILLS_DIR` when set. Use `-SkillsDir` to select another installation directory. The installer replaces the existing destination package, so reconcile installed-only changes first. Keep the destination outside this repository's source packages.
@@ -89,7 +89,7 @@ For projects that routinely need both skills, concise applicable `AGENTS.md` gui
 
 ## Examples and pilots
 
-- [Stack Junkie living showcase](skills/stack-junkie-style/ui/README.md): run the shared web or Qt components in three light/dark preview directions. Version 3.0.0-preview.1 awaits owner visual selection.
+- [Stack Junkie Style](https://github.com/stack-junkie/stack-junkie-style): the design system and its web and Qt showcases, in their own repo.
 - [Life Explosion pilot brief](pilots/project-team-life-explosion-0.1.0.md) and [trial guidance](pilots/life-explosion-team-trials.md): project-specific assignments kept outside the reusable Project Team package.
 - [Delivery review](pilots/life-explosion-delivery-review.html) and its [JSON snapshot](pilots/life-explosion-report-data.json): open the HTML locally to inspect the prepared runs, recorded findings, and remaining work. It is a snapshot, not a live project controller.
 - [Report authoring](skills/project-team/references/reporting.md): use the supplied renderer and template for another project's real data.

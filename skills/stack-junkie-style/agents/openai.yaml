@@ -1,4 +1,0 @@
-interface:
-  display_name: "Stack Junkie Style"
-  short_description: "Build interfaces with shared Stack Junkie components"
-  default_prompt: "Use $stack-junkie-style to build or improve this interface with shared components and layouts while preserving its real tasks and behavior."
