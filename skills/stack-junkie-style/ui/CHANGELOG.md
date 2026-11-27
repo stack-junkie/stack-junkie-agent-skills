@@ -12,6 +12,7 @@
 - Remove the Warm editorial and Precise technical directions. Clean utility is the only direction.
 - Native: add `StackJunkie::Stub` and `STACKJUNKIE_STUB`. Stubs are striped in development builds; release builds fail to compile at each remaining Stub's file and line. Fix a debug-build assert from closable document tabs.
 - Add Presets (Web app, Desktop app, Document editor, Website) in `shared/presets.json`. The web `AppShell` takes `preset` and `choices` and draws the rail, tree or list sidebar, closable document tabs, default theme (including system) and density. The showcase Settings window picks the preset and switches every choice, and Export writes them into `App.tsx`.
+- Native presets: the library embeds `shared/presets.json` and adds `PresetChoices`, `Preset::resolve` and `Preset::overrides`. `Workspace::setChoices` and `AppShell::setPreset` draw the rail, tree or list sidebar or none, closable document tabs and density; `AppShell` also applies the default theme, with `system` following the device. The comfortable density values move into the shared `density` tokens for both platforms. The native showcase Settings window gains a Layout section with the preset picker and every choice, and the CLI takes `--preset`, `--choice` and `--page settings/<section>`.
 
 ## 3.0.0-preview.9
 
