@@ -101,7 +101,7 @@ Pass a preset to `AppShell`, and override single choices with `choices`:
 
 `resolvePreset(id, overrides)` returns the full set of choices, and `presets` lists every preset with its label and description. Without `preset` or `choices`, `AppShell` keeps reading `rail`, `contextualSidebar` and `mode` from `config` as before.
 
-What the frame draws today: the rail; the sidebar as a tree, a flat list or nothing; closable document tabs (beside a sidebar); the default theme, where `system` follows the device; and compact or comfortable density. The frame does not own a command palette, so `overlays` can be a function that receives the choices, and `useShellChoices()` reads them anywhere inside the frame. The Menu bar, Status bar and bottom panel choices are accepted but drawn in a later preview. The Website preset is not drawn by `AppShell`; use `WebsiteLayout` (below). Given `preset="website"`, `AppShell` only turns its rail and sidebar off.
+What the frame draws today: the rail; the sidebar as a tree, a flat list or nothing; closable document tabs (beside a sidebar); the default theme, where `system` follows the device; and compact or comfortable density. The frame does not own a command palette, so `overlays` can be a function that receives the choices, and `useShellChoices()` reads them anywhere inside the frame. The Menu bar, Status bar and bottom panel are drawn when their choices are on (see below). The Website preset is not drawn by `AppShell`; use `WebsiteLayout` (below). Given `preset="website"`, `AppShell` only turns its rail and sidebar off.
 
 In the showcase, Settings > Layout holds the preset picker and every choice. Changes apply to the showcase frame at once, are saved in local storage, and Export writes them into a starter project (see Export below). Preview the starter app shows the frame a starter gets, including the Website layout.
 
@@ -116,6 +116,24 @@ Settings > Layout > Export starter writes a new project that matches the chosen 
 The file list and templates live in `../shared/starters`. `starters.mjs` beside them is the one generator: given a platform, a preset id and overrides, it returns the files. The native showcase fills the same templates the same way, so both Exports write identical starters.
 
 `npm run test:starters` is the preset-to-starter test. It builds the library (`npm run build:library`), then for every preset generates the web starter into a temporary folder and typechecks and builds it against the local package (the dependency is pointed at this folder with `file:`). For the three app presets it builds and installs the native library into a temporary prefix, then configures, builds and starts (offscreen) each native starter with CMake, plus once through the FetchContent fallback with a local source. A desktop-app case with custom choices checks they reach the starter, and every starter is compared with the native showcase's `--export-starter` output. Each case prints PASS or FAIL; any failure exits non-zero. Native cases need CMake, Visual Studio 2022 C++ tools and Qt 6: pass `-- --qt <prefix>`, set `STACKJUNKIE_QT`, or keep Qt in `../.tools/Qt/6.8.3/msvc2022_64`. `-- --only web` or `-- --only native` runs one side, and `-- --keep` keeps the generated starters.
+
+### Menu bar, Status bar and bottom panel
+
+The Document editor preset turns all three on. `AppShell` draws them from the `menuBar`, `statusBar` and `bottomPanel` choices; the app supplies their content:
+
+```tsx
+<AppShell preset="document-editor" name="My editor" description="What it does." version="0.1.0" sections={sections}
+  menuItems={{ file: [{ id: 'open', label: 'Open…', shortcut: 'Ctrl+O', run: openFile }], edit: [{ id: 'undo', label: 'Undo', shortcut: 'Ctrl+Z', run: undo }] }}
+  menus={[{ id: 'format', label: 'Format', items: [{ id: 'bold', label: 'Bold', run: bold }] }]}
+  status={{ state: 'Notes.md, saved', facts: ['Ln 12, Col 4', 'UTF-8'] }}
+  panels={[{ id: 'output', label: 'Output', content: <Output /> }, { id: 'problems', label: 'Problems', content: <Problems /> }]} />
+```
+
+- Menu bar: File, Edit, View, the app's `menus`, then Help, in the header beside the app's name. The frame owns Settings… (File, Control comma), About (Help, opens Settings at About), and in View the Sidebar (Control B), Bottom panel (Control J) and Status bar toggles and Dark theme. `menuItems` adds the app's items above the frame's; Edit holds only app items and is left out without them. An item's `shortcut` is shown text, so the app owns its own keys. Arrow keys move between menus and items, Enter or Space runs an item, Escape closes the menu. `MenuBar` also works on its own.
+- Status bar: a thin bottom row with `status.state` on the left (the current page's name when omitted) and `status.facts` on the right. Never ads or tips. `StatusBar` also works on its own.
+- Bottom panel: a resizable panel under the work area with its own tab row of `panels`. Drag or arrow-key its top edge; the close control and View > Bottom panel hide it for the session. Its height is saved with `storageKey`. No panel is drawn without `panels`. `BottomPanel` also works on its own as the last child of a flex column.
+
+The View toggles hide and show the parts for the session; the choices decide whether they exist.
 
 ### Website
 
