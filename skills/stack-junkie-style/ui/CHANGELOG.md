@@ -11,6 +11,7 @@
 - The expanded sidebar always pushes the work area and never becomes an overlay.
 - Remove the Warm editorial and Precise technical directions. Clean utility is the only direction.
 - Add Presets (Web app, Desktop app, Document editor, Website) in `shared/presets.json`. The web `AppShell` takes `preset` and `choices` and draws the rail, tree or list sidebar, closable document tabs, default theme (including system) and density. The showcase Settings window picks the preset and switches every choice, and Export writes them into `App.tsx`.
+- Add the first Dashboard, "Projects using Stack Junkie Style", as a local app in `apps/projects`. A project scan reads 02 Projects plus GitHub and GitLab repos (through `gh` and `glab`) and finds each project's version from its package.json, imports, CMake or copied skill. Tiles show how many projects use the style, are behind the latest version, have no readable version, or are front ends not using it yet, and each opens the matching list of projects with links to open them.
 
 ## 3.0.0-preview.9
 
